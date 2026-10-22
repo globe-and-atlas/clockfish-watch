@@ -3,18 +3,20 @@
 ## Identity
 
 - Name: `clockfish-watch`
-- Profile: `dashboard-static`
-- Deploy: `iis`
-- Runtime: `static`
+- Profile: project template scaffold plus Pebble SDK watchface
+- Deploy: RePebble after native verification and a separate publication request
+- Runtime: Pebble OS
 
 ## Purpose
 
-Describe who this project serves and what use, purpose, or beauty it should deliver.
+Make the current time feel like a living fish in a small aquarium while remaining readable at a glance.
 
 ## Constraints
 
-- Add real constraints here
+- Target emery and gabbro geometry.
+- Rest between brief swim animations to preserve battery.
+- Offer the workspace date convention.
 
 ## Out of Scope
 
-- Add out-of-scope boundaries here
+- Store publication and claims of physical-device validation.

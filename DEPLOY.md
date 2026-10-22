@@ -1,7 +1,3 @@
-# Deploy
+# Release
 
-This profile is intended for simple static deployment targets such as IIS, Vercel static hosting, or GitHub Pages.
-
-Suggested production artifact location:
-
-- `prod/`
+Build from `watchface/`, inspect fresh emery and gabbro native screenshots, then upload the PBW and appropriately sized media to RePebble when publication is requested. A successful compile alone is not release evidence.

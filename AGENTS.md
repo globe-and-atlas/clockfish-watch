@@ -37,3 +37,4 @@ Not every project uses the same runtime shape. Always adapt your assumptions to 
 - `frontend-app`: frontend build tooling (Vite, React, etc.)
 - `workflow-python`: deterministic Python execution
 - `hybrid-geospatial`: static UI plus deterministic analysis tooling
+- `pebble-watch`: native Pebble C watchface with Clay phone settings; build in `watchface/`

@@ -1,0 +1,19 @@
+{
+  "name": "clockfish-watch",
+  "version": "0.1.0",
+  "private": true,
+  "author": "Daniel Bally",
+  "keywords": ["pebble-app"],
+  "pebble": {
+    "displayName": "Clockfish",
+    "uuid": "e214674c-b39d-42b8-9ad1-dc0a4ce84355",
+    "sdkVersion": "3",
+    "enableMultiJS": true,
+    "targetPlatforms": ["emery", "gabbro"],
+    "watchapp": {"watchface": true},
+    "capabilities": ["configurable"],
+    "messageKeys": ["SETTING_SCENE", "SETTING_DATE", "SETTING_MOTION", "SETTING_MODE", "SETTING_BATTERY"],
+    "resources": {"media": []}
+  },
+  "dependencies": {"@rebble/clay": "1.1.0"}
+}

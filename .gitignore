@@ -9,6 +9,7 @@ __pycache__/
 # Note: .tmp/.gitkeep is still tracked so the directory exists on clone.
 .tmp/*
 !.tmp/.gitkeep
+**/.tmp/
 
 # Secrets
 *.pem

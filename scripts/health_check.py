@@ -43,6 +43,7 @@ CORE_REQUIRED = [
 ]
 
 PROFILE_REQUIRED = {
+    "pebble-watch": ["watchface/package.json", "watchface/wscript", "watchface/src/c/main.c", "watchface/src/pkjs/index.js"],
     "dashboard-static": [
         "index.html", "style.css", "src", "data", "prod", "DEPLOY.md",
     ],
@@ -206,7 +207,8 @@ def check_knowledge() -> None:
     if index.exists():
         index_content = index.read_text()
         has_entries = any(
-            line.strip().startswith("- [") and "gitkeep" not in line
+            (line.strip().startswith("- [") or line.strip().startswith("| ["))
+            and "gitkeep" not in line
             for line in index_content.splitlines()
         )
         check("knowledge/INDEX.md has entries", has_entries,
@@ -276,9 +278,10 @@ def check_tests(profile: str) -> None:
         return
 
     section("Tests")
+    suffix = ".js" if profile == "pebble-watch" else ".py"
     test_files = [
         f for f in tests_dir.iterdir()
-        if f.suffix == ".py" and f.name != "_template_test.py" and f.name != "__init__.py"
+        if f.suffix == suffix and f.name not in ("_template_test.py", "__init__.py")
     ]
     check("Real test files exist", bool(test_files),
           "only template found — write project tests" if not test_files else f"{len(test_files)} test file(s)",
@@ -286,8 +289,10 @@ def check_tests(profile: str) -> None:
 
     if test_files:
         try:
+            command = (["node", "--test", *[str(f) for f in test_files]] if profile == "pebble-watch"
+                       else ["python3", "-m", "pytest", "tests/", "-q", "--tb=short"])
             result = subprocess.run(
-                ["python3", "-m", "pytest", "tests/", "-q", "--tb=short"],
+                command,
                 cwd=ROOT, capture_output=True, text=True, timeout=60,
             )
             passed = result.returncode == 0
@@ -296,7 +301,7 @@ def check_tests(profile: str) -> None:
         except subprocess.TimeoutExpired:
             check("Tests pass", False, "timed out after 60s")
         except FileNotFoundError:
-            check("pytest available", False, "install: pip install pytest", warning=True)
+            check("Test runner available", False, "install Node or pytest", warning=True)
 
 
 # ── Main ──────────────────────────────────────────────────────────────────────

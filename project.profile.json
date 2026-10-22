@@ -1,7 +1,7 @@
 {
-  "profile": "dashboard-static",
-  "deploy": "iis",
-  "runtime": "static",
+  "profile": "pebble-watch",
+  "deploy": "repebble",
+  "runtime": "pebble-os",
   "loop_mode": "artifact",
   "knowledge_level": "standard"
 }
