@@ -62,3 +62,10 @@
 - **Cause:** The time-setting command returned before the watch face had rendered the new minute.
 - **Fix:** Wait after setting emulator time, inspect the six-frame sheets, and recapture any mismatched frame before assembling and uploading a GIF. Emery Compact bold and Gabbro Digital fine were recaptured at 23:58; both final public GIF assets were checked after upload.
 - **Graduated to:** `execution/capture_fonts.py` and `knowledge/procedural/native_capture.md`.
+
+## 2026-10-23: Tall light digits sat low in the fish
+
+- **Error:** Tall light looked lower than the other time styles in native 23:58 previews.
+- **Cause:** Bitham 42 Light has different vertical glyph metrics even when drawn in the same Pebble text rectangle.
+- **Fix:** Shift only Tall light's bitmap-sprite time overlay up 7 px on Emery and 6 px on Gabbro. Compare visible white-pixel bounds with Rounded in native captures, then inspect the fish outline.
+- **Graduated to:** `watchface/src/c/main.c` and `knowledge/procedural/native_capture.md`.

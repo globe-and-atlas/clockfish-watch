@@ -35,3 +35,7 @@ A three-second glance beginning at a uniformly random phase of the ambient cycle
 ## 2026-10-23: Selectable time fonts
 
 Use six Pebble system-font mappings for the live time so font selection adds no packaged font resources. Keep the 0.7.1 Bitham mapping at index 0 for saved-setting compatibility. Use target-specific sizes where needed: a 42-point bold Bitham fits Round 2, while Time 2 needs the smaller 34-point medium numeral font for the same choice. Select, validate, and persist the font independently of scene and motion. Native 23:58 captures on both targets define the width check; emulator restart confirms the stored choice survives relaunch.
+
+## 2026-10-23: Battery fish percentage fit
+
+Keep the explicit percentage in its own small fish. Widen its body from 46 to 58 native pixels while keeping its center aligned with the watch. Move the eye toward the nose and give the label a 43-pixel text box. Native 100%, 50%, and 5% captures on Time 2 and Round 2 establish the fit; grayscale stills preserve the readable contrast.

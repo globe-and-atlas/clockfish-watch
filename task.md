@@ -1,5 +1,41 @@
 # Clockfish watchface
 
+## Battery-fish percentage fit — 2026-10-23
+
+- [x] The 100% label has visible padding inside the battery fish on Time 2.
+- [x] The 100% label has visible padding inside the battery fish on Round 2.
+- [x] The battery fish remains within the Time 2 display boundary.
+- [x] The battery fish remains within the Round 2 display boundary.
+- [x] The battery label remains readable at 50% on Time 2.
+- [x] The battery label remains readable at 50% on Round 2.
+- [x] The battery label remains readable at 5% on Time 2.
+- [x] The battery label remains readable at 5% on Round 2.
+- [x] The battery fish remains distinct in the Time 2 grayscale scene.
+- [x] The battery fish remains distinct in the Round 2 grayscale scene.
+- [x] The native dual-target build succeeds.
+- [x] The Time 2 store GIF shows the final battery fish.
+- [x] The Round 2 store GIF shows the final battery fish.
+- [x] The public Time 2 gallery leads with the 0.8.2 GIF.
+- [x] The public Round 2 gallery leads with the 0.8.2 GIF.
+- [x] RePebble lists version 0.8.2 for Time 2.
+- [x] RePebble lists version 0.8.2 for Round 2.
+
+## Tall-light time placement — 2026-10-23
+
+- [x] Tall-light digits are vertically centered within the fish body on Time 2.
+- [x] Tall-light digits are vertically centered within the fish body on Round 2.
+- [x] Rounded retains its current placement.
+- [x] Digital bold retains its current placement.
+- [x] Digital fine retains its current placement.
+- [x] Classic bold retains its current placement.
+- [x] Compact bold retains its current placement.
+- [x] The native dual-target build succeeds.
+- [x] Native tall-light captures are inspected at each target resolution.
+- [x] The 0.8.1 store GIF uses the corrected Time 2 tall-light capture.
+- [x] The 0.8.1 store GIF uses the corrected Round 2 tall-light capture.
+- [x] RePebble lists 0.8.1 for Time 2.
+- [x] RePebble lists 0.8.1 for Round 2.
+
 ## RePebble gallery order — 2026-10-23
 
 - [x] The Time 2 public gallery shows the 0.8.0 animated GIF first.

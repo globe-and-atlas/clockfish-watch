@@ -1,12 +1,17 @@
 # Current session
 
-**Goal:** Add six selectable time fonts and lead both RePebble galleries with an updated animated GIF.
+**Goal:** Correct tall-light digit placement and give the battery percentage more room inside its fish on Time 2 and Round 2.
 **Agent:** OpenAI Codex
 **Handoff-from:** OpenAI Codex
 **Handoff-type:** continuation
-**Status:** 0.8.0 is published and publicly listed for both watches. The updated GIF leads both public galleries and each retains four scene stills. Physical-watch validation has not been performed.
+**Status:** Clockfish 0.8.2 is publicly listed for Time 2 and Round 2 with new GIF-first galleries. Native captures show centered Tall light and a wider battery fish with readable 100%, 50%, and 5% on both targets. Physical-watch validation has not been performed.
 
 ## Checkpoints
+- 2026-10-23: Fresh canonical public Clockfish page showed 0.8.2 PBW and the new first GIF asset for Time 2 and Round 2. An older open Time 2 tab retained cached media; fresh page verification resolved the discrepancy. The completed local build, native captures, tests, and fresh read-only review support the release.
+- 2026-10-23: Built 0.8.2, inspected native battery percentages and grayscale on Emery and Gabbro, refreshed six font captures and motion/scene captures per target, and generated 12-frame GIFs. Node, Python, host C tests and clean Pebble build pass; fresh read-only verifier passed local fit. Published the 0.8.2 PBW and saved five-media GIF-first galleries for both devices. Public cache briefly showed older version/media after device switching; final propagation check pending.
+- 2026-10-23: Wearer noticed the percentage was cramped inside the battery fish. Enlarging the fish body and separating the label from its eye, then checking 100%, 50%, and 5% at native resolution.
+- 2026-10-23: Native tall-light bounds now center with Rounded on both targets. Independent read-only review found no concrete issue. Published 0.8.1 dual-target PBW and replaced both GIF-first galleries. Public Round 2 showed 0.8.1 with the new GIF; Time 2 showed 0.8.1 but briefly served a cached prior GIF.
+- 2026-10-23: Began tall-light alignment fix after wearer noticed the large style low in the fish. Measured native 23:58 captures on both targets; moving only tall-light's overlay upward, then rebuilding and recapturing.
 - 2026-10-23: Final media QA found a stale 08:20 value in the Round 2 Digital fine screenshot. Recaptured 23:58, regenerated the 0.8.0 GIF, replaced the Round 2 gallery, and verified the new GIF asset leads the fresh public Round 2 view. Time 2 public gallery already showed its corrected GIF first.
 - 2026-10-23: Built 0.8.0 with six time fonts and saved settings, assembled new native GIFs, and published the dual-target PBW. Node, Python, and host C tests pass. Twelve native font captures were inspected at 200x228 and 260x260, including wide 23:58 examples; a fresh verifier passed the local feature. Emulator restart retained Tall light. Both listing editors show the updated GIF first and four stills; fresh public Round 2 shows the updated GIF first. After cache propagation, fresh public Time 2 also showed the updated GIF first, four scene stills, 0.8.0 description, and the 0.8.0 PBW.
 - 2026-10-23: Started a six-font settings and native-fit pass. The existing rounded time style remains the default for upgraded installs. RePebble saved galleries put the 0.7.1 GIF first; fresh public Time 2 confirms the order. Round 2 public view still showed stale media during the initial check.
@@ -36,7 +41,7 @@
 - 2026-10-22 17:20: Added a bounded vertical arc to the swim. Final emery tap capture shifted the fish left and up; the settled frame returned to center. Rebuilt and recaptured all nine native scene/night screenshots. Clean health check and settings tests passed.
 
 ## Handoff
-- **Completed:** Dual-target 0.8.0 published on RePebble with six selectable time fonts. Local native fit, tests, independent verification, and emulator restart persistence check passed. Both public galleries lead with the new GIF.
+- **Completed:** Dual-target 0.8.2 is publicly listed with corrected Tall light alignment, a wider battery fish, and updated GIF-first galleries. Native Time 2 and Round 2 renders, tests, and independent verification passed.
 - **Next:** Check sustained motion and power on physical Pebble Time 2 and Round 2.
 - **Limit:** Emulator and public-listing results do not establish physical-device battery life, motion quality, or saved-setting migration on an existing install.
 

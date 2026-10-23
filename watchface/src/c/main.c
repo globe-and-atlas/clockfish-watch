@@ -590,38 +590,40 @@ static void draw_clock_fish(GContext *ctx, int w, int h, Palette p, const struct
     for (int i = 0; time_text[i]; i++) time_text[i] = time_text[i + 1];
   }
   graphics_context_set_text_color(ctx, s_fish_variant == 3 ? GColorWhite : color(0xFFF1C6));
+  int time_y_adjust = s_time_font == 5 ? (w >= 240 ? -6 : -7) : 0;
   graphics_draw_text(ctx, time_text,
                      time_font(w),
                      GRect(x + (w >= 240 ? 48 : 42),
-                           h / 2 - 28 + fish_bob(), w >= 240 ? 118 : 102, 42),
+                           h / 2 - 28 + fish_bob() + time_y_adjust,
+                           w >= 240 ? 118 : 102, 42),
                      GTextOverflowModeTrailingEllipsis, GTextAlignmentCenter, NULL);
 }
 
 static void draw_battery_fish(GContext *ctx, int w, int h, Palette p, bool night) {
   if (!s_battery_visible) return;
-  int x = w / 2 - 23, y = h - 50;
+  int x = w / 2 - 29, y = h - 50;
   GColor level = s_render_scene == 3 ? (night ? GColorWhite : GColorBlack) :
                  (s_battery_percent <= 20 ? color(0xDF4848) :
                   (s_battery_percent <= 50 ? color(0xE8AB40) : color(0x52C578)));
   GPoint tail[] = {
-    GPoint(x + 3, y + 11), GPoint(x - 13, y + 1),
-    GPoint(x - 9, y + 11), GPoint(x - 13, y + 22)
+    GPoint(x + 3, y + 11), GPoint(x - 14, y + 1),
+    GPoint(x - 10, y + 11), GPoint(x - 14, y + 22)
   };
   fill_polygon(ctx, tail, 4, level, p.deep);
   GPoint body[] = {
-    GPoint(x, y + 11), GPoint(x + 5, y + 4), GPoint(x + 17, y + 1),
-    GPoint(x + 35, y + 3), GPoint(x + 46, y + 11),
-    GPoint(x + 35, y + 21), GPoint(x + 17, y + 23), GPoint(x + 5, y + 18)
+    GPoint(x, y + 11), GPoint(x + 7, y + 4), GPoint(x + 20, y + 1),
+    GPoint(x + 45, y + 3), GPoint(x + 58, y + 11),
+    GPoint(x + 45, y + 21), GPoint(x + 20, y + 23), GPoint(x + 7, y + 18)
   };
   fill_polygon(ctx, body, 8, level, p.deep);
   char label[6];
   snprintf(label, sizeof(label), "%d%%", s_battery_percent);
   graphics_context_set_text_color(ctx, s_render_scene == 3 && !night ? GColorWhite : GColorBlack);
   graphics_draw_text(ctx, label, fonts_get_system_font(FONT_KEY_GOTHIC_18_BOLD),
-                     GRect(x + 2, y - 1, 40, 23), GTextOverflowModeTrailingEllipsis,
+                     GRect(x + 5, y - 1, 43, 23), GTextOverflowModeTrailingEllipsis,
                      GTextAlignmentCenter, NULL);
   graphics_context_set_fill_color(ctx, s_render_scene == 3 && !night ? GColorWhite : GColorBlack);
-  graphics_fill_circle(ctx, GPoint(x + 40, y + 6), 1);
+  graphics_fill_circle(ctx, GPoint(x + 51, y + 6), 1);
 }
 
 static void draw_date(GContext *ctx, int w, int h, Palette p, const struct tm *now, bool night) {
