@@ -10,6 +10,7 @@ ROOT = Path(__file__).resolve().parents[1]
 IMAGES = ROOT / "watchface/resources/images"
 SIZES = {"emery": (200, 228), "gabbro": (260, 260)}
 SCENES = ("castle", "kelp", "reef", "grayscale")
+FISH_COLORS = SCENES + ("violet", "sea-green")
 
 
 class ArtAssetTests(unittest.TestCase):
@@ -29,7 +30,7 @@ class ArtAssetTests(unittest.TestCase):
 
     def test_fish_sprites_have_transparency_and_native_palette(self) -> None:
         for platform, size in (("emery", (184, 100)), ("gabbro", (216, 116))):
-            for scene in SCENES:
+            for scene in FISH_COLORS:
                 path = IMAGES / f"fish-{platform}-{scene}.png"
                 with self.subTest(path=path), Image.open(path) as image:
                     self.assertEqual(image.size, size)

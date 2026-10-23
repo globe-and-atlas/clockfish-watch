@@ -12,7 +12,7 @@ ROOT = Path(__file__).resolve().parents[1]
 SOURCE = ROOT / "assets/source/fish-blue-generated.png"
 OUTPUT = ROOT / "watchface/resources/images"
 SIZES = {"emery": (184, 100), "gabbro": (216, 116)}
-SCENES = ("castle", "kelp", "reef", "grayscale")
+SCENES = ("castle", "kelp", "reef", "grayscale", "violet", "sea-green")
 
 
 def pebble_level(value: int) -> int:
@@ -26,10 +26,12 @@ def recolor(pixel: tuple[int, int, int, int], scene: str) -> tuple[int, int, int
     if scene == "grayscale":
         gray = round(red * 0.299 + green * 0.587 + blue * 0.114)
         red = green = blue = gray
-    elif scene in ("castle", "reef"):
+    elif scene in ("castle", "reef", "violet", "sea-green"):
         hue, saturation, value = colorsys.rgb_to_hsv(red / 255, green / 255, blue / 255)
         if saturation > 0.28 and blue > red * 1.15 and value > 0.12:
-            new_hue = 0.07 if scene == "castle" else 0.52
+            new_hue = {
+                "castle": 0.07, "reef": 0.52, "violet": 0.76, "sea-green": 0.39,
+            }[scene]
             red, green, blue = (
                 round(channel * 255)
                 for channel in colorsys.hsv_to_rgb(new_hue, saturation, value)

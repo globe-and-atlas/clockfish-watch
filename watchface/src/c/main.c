@@ -1,7 +1,8 @@
 #include <pebble.h>
+#include "selection.h"
 
-enum { KEY_SCENE = 1, KEY_DATE, KEY_MOTION, KEY_MODE, KEY_BATTERY };
-enum { PERSIST_SCENE = 1, PERSIST_DATE, PERSIST_MOTION, PERSIST_MODE, PERSIST_BATTERY };
+enum { PERSIST_SCENE = 1, PERSIST_DATE, PERSIST_MOTION, PERSIST_MODE, PERSIST_BATTERY,
+       PERSIST_FISH_COLOR, PERSIST_BACKGROUND };
 
 typedef struct {
   GColor water, deep, sand, plant, detail, fish, fin, numeral, bubble, battery;
@@ -11,10 +12,14 @@ static Window *s_window;
 static Layer *s_face;
 static GBitmap *s_fish_bitmap;
 static GBitmap *s_background_bitmap;
-static int s_background_scene = -1;
+static int s_fish_variant = -1;
+static int s_background_variant = -1;
 static bool s_background_night;
 static AppTimer *s_swim_timer;
 static int s_scene;
+static int s_render_scene;
+static int s_fish_color;
+static int s_background;
 static int s_date;
 static int s_mode = 2;
 static bool s_motion = true;
@@ -24,17 +29,17 @@ static int s_swim_step = -1;
 
 static GColor color(uint32_t rgb) { return GColorFromHEX(rgb); }
 
-static Palette palette(bool night) {
+static Palette palette(int scene, bool night) {
   Palette p;
-  if (s_scene == 1) {
+  if (scene == 1) {
     p = (Palette){color(0x0A5262), color(0x073746), color(0x174E4B),
       color(0x2F996E), color(0x97CFC1), color(0x175A81), color(0x6DD6BD),
       color(0xFFFFFF), color(0xD5F6E5), color(0xE7B64E)};
-  } else if (s_scene == 2) {
+  } else if (scene == 2) {
     p = (Palette){color(0x091536), color(0x050B21), color(0x242457),
       color(0x6544A2), color(0xEA5090), color(0x096A85), color(0x2BCDE5),
       color(0xFFFFFF), color(0x42D3EB), color(0xE5A137)};
-  } else if (s_scene == 3) {
+  } else if (scene == 3) {
     p = (Palette){color(0xAAAAAA), color(0x555555), color(0xAAAAAA),
       color(0x555555), color(0x222222), color(0x222222), color(0x555555),
       color(0xFFFFFF), color(0xFFFFFF), color(0x555555)};
@@ -43,13 +48,13 @@ static Palette palette(bool night) {
       color(0x399951), color(0xDCE4D5), color(0xA34926), color(0xF1AC55),
       color(0xFFFFFF), color(0xFFFFFF), color(0xE7B64E)};
   }
-  if (!night && s_scene == 2) {
+  if (!night && scene == 2) {
     p.water = color(0x24568E);
     p.deep = color(0x143B70);
     p.sand = color(0x634C8C);
     p.plant = color(0x976BC0);
     p.detail = color(0xF385A9);
-  } else if (night && s_scene == 3) {
+  } else if (night && scene == 3) {
     p.water = color(0x444444);
     p.deep = color(0x111111);
     p.sand = color(0x666666);
@@ -58,7 +63,7 @@ static Palette palette(bool night) {
     p.fish = color(0x555555);
     p.fin = color(0x999999);
     p.bubble = GColorWhite;
-  } else if (night && s_scene != 2) {
+  } else if (night && scene != 2) {
     p.water = color(0x092E49);
     p.deep = color(0x081E36);
     p.plant = color(0x256B61);
@@ -100,19 +105,19 @@ static void draw_plants(GContext *ctx, int w, int h, Palette p) {
   int right = w - left;
   for (int side = 0; side < 2; side++) {
     int x = side ? right : left;
-    for (int stem = 0; stem < (s_scene == 1 ? 4 : 3); stem++) {
-      int root = x + (stem - 1) * (s_scene == 1 ? 12 : 10);
-      int top = bottom - (s_scene == 1 ? 92 : 46) - stem * (s_scene == 1 ? 9 : 6);
+    for (int stem = 0; stem < (s_render_scene == 1 ? 4 : 3); stem++) {
+      int root = x + (stem - 1) * (s_render_scene == 1 ? 12 : 10);
+      int top = bottom - (s_render_scene == 1 ? 92 : 46) - stem * (s_render_scene == 1 ? 9 : 6);
       int tip = root + (side ? -8 : 8) + (stem - 1) * 3;
-      line(ctx, p.deep, root + 1, bottom, tip + 1, top, s_scene == 1 ? 5 : 3);
-      line(ctx, p.plant, root, bottom, tip, top, s_scene == 1 ? 3 : 2);
-      for (int leaf = 0; leaf < (s_scene == 1 ? 4 : 2); leaf++) {
-        int yy = bottom - 16 - leaf * (s_scene == 1 ? 19 : 18);
+      line(ctx, p.deep, root + 1, bottom, tip + 1, top, s_render_scene == 1 ? 5 : 3);
+      line(ctx, p.plant, root, bottom, tip, top, s_render_scene == 1 ? 3 : 2);
+      for (int leaf = 0; leaf < (s_render_scene == 1 ? 4 : 2); leaf++) {
+        int yy = bottom - 16 - leaf * (s_render_scene == 1 ? 19 : 18);
         if (yy <= top + 8) continue;
         int stem_x = root + (tip - root) * (bottom - yy) / (bottom - top);
         int spread = (leaf % 2 ? -1 : 1) * (side ? -1 : 1);
-        int length = s_scene == 1 ? 23 : 13;
-        int rise = s_scene == 1 ? 17 : 10;
+        int length = s_render_scene == 1 ? 23 : 13;
+        int rise = s_render_scene == 1 ? 17 : 10;
         GPoint blade[] = {
           GPoint(stem_x, yy + 5),
           GPoint(stem_x + spread * (length / 2), yy - 7),
@@ -120,9 +125,9 @@ static void draw_plants(GContext *ctx, int w, int h, Palette p) {
           GPoint(stem_x + spread * (length - 6), yy - 4),
           GPoint(stem_x + spread * 4, yy + 7)
         };
-        GColor blade_color = (s_scene == 1 && leaf % 2) ? p.detail : p.plant;
+        GColor blade_color = (s_render_scene == 1 && leaf % 2) ? p.detail : p.plant;
         fill_polygon(ctx, blade, 5, blade_color, p.deep);
-        if (s_scene == 1) {
+        if (s_render_scene == 1) {
           line(ctx, p.deep, stem_x, yy + 5,
                stem_x + spread * (length - 5), yy - rise + 2, 1);
         }
@@ -161,7 +166,7 @@ static void draw_castle(GContext *ctx, int w, int h, Palette p) {
 
 static void draw_scene_details(GContext *ctx, int w, int h, Palette p) {
   int floor = h - (w >= 240 ? 50 : 27);
-  if (s_scene == 0) {
+  if (s_render_scene == 0) {
     draw_castle(ctx, w, h, p);
     graphics_context_set_fill_color(ctx, p.detail);
     for (int i = 0; i < 8; i++) {
@@ -185,7 +190,7 @@ static void draw_scene_details(GContext *ctx, int w, int h, Palette p) {
     graphics_context_set_fill_color(ctx, p.deep);
     graphics_fill_circle(ctx, GPoint(crab_x - 2, crab_y - 1), 1);
     graphics_fill_circle(ctx, GPoint(crab_x + 2, crab_y - 1), 1);
-  } else if (s_scene == 1) {
+  } else if (s_render_scene == 1) {
     int jelly_x = w * 3 / 4, jelly_y = h / 5;
     graphics_context_set_fill_color(ctx, p.detail);
     graphics_fill_circle(ctx, GPoint(jelly_x, jelly_y), 9);
@@ -202,7 +207,7 @@ static void draw_scene_details(GContext *ctx, int w, int h, Palette p) {
     graphics_context_set_fill_color(ctx, p.detail);
     graphics_fill_circle(ctx, GPoint(w / 2 - 45, floor + 7), 6);
     graphics_fill_circle(ctx, GPoint(w / 2 + 42, floor + 11), 4);
-  } else if (s_scene == 2) {
+  } else if (s_render_scene == 2) {
     GPoint left_rock[] = {
       GPoint(0, floor + 5), GPoint(0, floor - 8),
       GPoint(12, floor - 18), GPoint(31, floor - 14),
@@ -288,8 +293,55 @@ static void draw_small_fish(GContext *ctx, int x, int y, int size, GColor body, 
   graphics_fill_circle(ctx, GPoint(x + size / 2, y - 1), 1);
 }
 
+static void draw_scene_life(GContext *ctx, int w, int h, Palette p) {
+  int drift = s_swim_step < 0 ? 0 : (s_swim_step - 5) / 3;
+  GColor accent = s_render_scene == 3 ? GColorBlack : p.fin;
+  GColor outline = s_render_scene == 3 ? GColorWhite : p.deep;
+  int school_y = w >= 240 ? 64 : 47;
+  draw_small_fish(ctx, 41 + drift, school_y, 4, accent, outline);
+  draw_small_fish(ctx, 29 + drift, school_y + 12, 3, p.detail, outline);
+
+  int jelly_x = w - 42, jelly_y = w >= 240 ? 66 : 45;
+  GColor jelly = s_render_scene == 3 ? GColorWhite : color(0xF2A8C9);
+  graphics_context_set_fill_color(ctx, jelly);
+  graphics_fill_circle(ctx, GPoint(jelly_x, jelly_y), 7);
+  graphics_context_set_fill_color(ctx, outline);
+  graphics_fill_circle(ctx, GPoint(jelly_x - 2, jelly_y), 1);
+  graphics_fill_circle(ctx, GPoint(jelly_x + 2, jelly_y), 1);
+  line(ctx, jelly, jelly_x - 5, jelly_y + 5, jelly_x - 5, jelly_y + 14, 1);
+  line(ctx, jelly, jelly_x, jelly_y + 7, jelly_x, jelly_y + 16, 1);
+  line(ctx, jelly, jelly_x + 5, jelly_y + 5, jelly_x + 5, jelly_y + 14, 1);
+
+  // A small crab stays beside the seabed, clear of the battery fish.
+  int crab_x = w - (w >= 240 ? 50 : 32);
+  int crab_y = h - (w >= 240 ? 50 : 36);
+  GColor crab_color = s_render_scene == 3 ? GColorWhite :
+                      s_render_scene == 0 ? color(0xD44E6A) : color(0xFFAA33);
+  GColor crab_edge = s_render_scene == 3 ? GColorBlack : color(0x102C44);
+  graphics_context_set_fill_color(ctx, crab_edge);
+  graphics_fill_circle(ctx, GPoint(crab_x, crab_y), 8);
+  graphics_context_set_fill_color(ctx, crab_color);
+  graphics_fill_circle(ctx, GPoint(crab_x, crab_y), 6);
+  line(ctx, crab_color, crab_x - 5, crab_y + 4, crab_x - 11, crab_y + 9, 2);
+  line(ctx, crab_color, crab_x + 5, crab_y + 4, crab_x + 11, crab_y + 9, 2);
+  line(ctx, crab_color, crab_x - 5, crab_y - 2, crab_x - 11, crab_y - 8, 2);
+  line(ctx, crab_color, crab_x + 5, crab_y - 2, crab_x + 11, crab_y - 8, 2);
+  graphics_context_set_fill_color(ctx, GColorWhite);
+  graphics_fill_circle(ctx, GPoint(crab_x - 2, crab_y - 2), 1);
+  graphics_fill_circle(ctx, GPoint(crab_x + 2, crab_y - 2), 1);
+
+  // Bubbles sit at the screen edge and rise slightly during a swim.
+  graphics_context_set_stroke_color(ctx, s_render_scene == 3 ? GColorBlack : GColorWhite);
+  graphics_context_set_stroke_width(ctx, 1);
+  for (int i = 0; i < 5; i++) {
+    int x = w - 15 - (i % 2) * 7;
+    int y = h - 49 - i * 27 - (s_swim_step < 0 ? 0 : s_swim_step);
+    graphics_draw_circle(ctx, GPoint(x, y), 2 + i % 2);
+  }
+}
+
 static void draw_light_rays(GContext *ctx, int w, int h, bool night) {
-  if (night || s_scene != 0) return;
+  if (night || s_render_scene != 0) return;
   GColor ray = color(0x57B9DC);
   GPoint left[] = {
     GPoint(14, 0), GPoint(29, 0), GPoint(w / 3, h / 2 + 20),
@@ -325,7 +377,7 @@ static void draw_clock_fish_vector(GContext *ctx, int w, int h, Palette p, const
   int middle = y + body_h / 2;
   int tail = w >= 240 ? 30 : 25;
   int flap = s_swim_step >= 0 && s_swim_step % 2 ? 3 : 0;
-  GColor edge = s_scene == 3 ? p.detail : p.deep;
+  GColor edge = s_fish_variant == 3 ? p.detail : p.deep;
   GPoint tail_points[] = {
     GPoint(x + 13, middle - 10), GPoint(x + 2, middle - 14),
     GPoint(x - tail + 7, y + 8), GPoint(x - tail - flap, y + 5),
@@ -425,21 +477,25 @@ static void draw_clock_fish_vector(GContext *ctx, int w, int h, Palette p, const
 static uint32_t fish_resource_id(int width, int scene) {
   static const uint32_t emery[] = {
     RESOURCE_ID_FISH_EMERY_CASTLE, RESOURCE_ID_FISH_EMERY_KELP,
-    RESOURCE_ID_FISH_EMERY_REEF, RESOURCE_ID_FISH_EMERY_GRAYSCALE
+    RESOURCE_ID_FISH_EMERY_REEF, RESOURCE_ID_FISH_EMERY_GRAYSCALE,
+    RESOURCE_ID_FISH_EMERY_VIOLET, RESOURCE_ID_FISH_EMERY_SEA_GREEN
   };
   static const uint32_t gabbro[] = {
     RESOURCE_ID_FISH_GABBRO_CASTLE, RESOURCE_ID_FISH_GABBRO_KELP,
-    RESOURCE_ID_FISH_GABBRO_REEF, RESOURCE_ID_FISH_GABBRO_GRAYSCALE
+    RESOURCE_ID_FISH_GABBRO_REEF, RESOURCE_ID_FISH_GABBRO_GRAYSCALE,
+    RESOURCE_ID_FISH_GABBRO_VIOLET, RESOURCE_ID_FISH_GABBRO_SEA_GREEN
   };
-  int index = scene >= 0 && scene < 4 ? scene : 0;
+  int index = scene >= 0 && scene < 6 ? scene : 0;
   return width >= 240 ? gabbro[index] : emery[index];
 }
 
-static void reload_fish_bitmap(void) {
+static void reload_fish_bitmap(int variant) {
   if (!s_face) return;
+  if (s_fish_bitmap && s_fish_variant == variant) return;
   if (s_fish_bitmap) gbitmap_destroy(s_fish_bitmap);
   int width = layer_get_bounds(s_face).size.w;
-  s_fish_bitmap = gbitmap_create_with_resource(fish_resource_id(width, s_scene));
+  s_fish_bitmap = gbitmap_create_with_resource(fish_resource_id(width, variant));
+  s_fish_variant = variant;
 }
 
 static uint32_t background_resource_id(int width, int scene, bool night) {
@@ -459,15 +515,15 @@ static uint32_t background_resource_id(int width, int scene, bool night) {
   return width >= 240 ? gabbro[index][night] : emery[index][night];
 }
 
-static void reload_background_bitmap(bool night) {
+static void reload_background_bitmap(int variant, bool night) {
   if (!s_face) return;
-  if (s_background_bitmap && s_background_scene == s_scene &&
+  if (s_background_bitmap && s_background_variant == variant &&
       s_background_night == night) return;
   if (s_background_bitmap) gbitmap_destroy(s_background_bitmap);
   int width = layer_get_bounds(s_face).size.w;
   s_background_bitmap = gbitmap_create_with_resource(
-      background_resource_id(width, s_scene, night));
-  s_background_scene = s_scene;
+      background_resource_id(width, variant, night));
+  s_background_variant = variant;
   s_background_night = night;
 }
 
@@ -488,7 +544,7 @@ static void draw_clock_fish(GContext *ctx, int w, int h, Palette p, const struct
   if (!clock_is_24h_style() && time_text[0] == '0') {
     for (int i = 0; time_text[i]; i++) time_text[i] = time_text[i + 1];
   }
-  graphics_context_set_text_color(ctx, s_scene == 3 ? GColorWhite : color(0xFFF1C6));
+  graphics_context_set_text_color(ctx, s_fish_variant == 3 ? GColorWhite : color(0xFFF1C6));
   graphics_draw_text(ctx, time_text,
                      fonts_get_system_font(w >= 240 ? FONT_KEY_LECO_36_BOLD_NUMBERS :
                                                         FONT_KEY_LECO_32_BOLD_NUMBERS),
@@ -500,7 +556,7 @@ static void draw_clock_fish(GContext *ctx, int w, int h, Palette p, const struct
 static void draw_battery_fish(GContext *ctx, int w, int h, Palette p, bool night) {
   if (!s_battery_visible) return;
   int x = w / 2 - 23, y = h - 50;
-  GColor level = s_scene == 3 ? (night ? GColorWhite : GColorBlack) :
+  GColor level = s_render_scene == 3 ? (night ? GColorWhite : GColorBlack) :
                  (s_battery_percent <= 20 ? color(0xDF4848) :
                   (s_battery_percent <= 50 ? color(0xE8AB40) : color(0x52C578)));
   GPoint tail[] = {
@@ -516,11 +572,11 @@ static void draw_battery_fish(GContext *ctx, int w, int h, Palette p, bool night
   fill_polygon(ctx, body, 8, level, p.deep);
   char label[6];
   snprintf(label, sizeof(label), "%d%%", s_battery_percent);
-  graphics_context_set_text_color(ctx, s_scene == 3 && !night ? GColorWhite : GColorBlack);
+  graphics_context_set_text_color(ctx, s_render_scene == 3 && !night ? GColorWhite : GColorBlack);
   graphics_draw_text(ctx, label, fonts_get_system_font(FONT_KEY_GOTHIC_18_BOLD),
                      GRect(x + 2, y - 1, 40, 23), GTextOverflowModeTrailingEllipsis,
                      GTextAlignmentCenter, NULL);
-  graphics_context_set_fill_color(ctx, s_scene == 3 && !night ? GColorWhite : GColorBlack);
+  graphics_context_set_fill_color(ctx, s_render_scene == 3 && !night ? GColorWhite : GColorBlack);
   graphics_fill_circle(ctx, GPoint(x + 40, y + 6), 1);
 }
 
@@ -531,7 +587,7 @@ static void draw_date(GContext *ctx, int w, int h, Palette p, const struct tm *n
                        (s_date == 2 ? "%m/%d/%Y" : "%d/%m/%Y");
   strftime(date_text, sizeof(date_text), format, now);
   int top = w >= 240 ? 30 : 8;
-  bool pale = s_scene == 3 && !night;
+  bool pale = s_render_scene == 3 && !night;
   graphics_context_set_fill_color(ctx, pale ? GColorWhite : color(0x082747));
   graphics_fill_rect(ctx, GRect(w / 2 - 52, top + 2, 104, 18), 5, GCornersAll);
   GColor ink = pale ? GColorBlack : GColorWhite;
@@ -547,8 +603,13 @@ static void face_update(Layer *layer, GContext *ctx) {
   time_t epoch = time(NULL);
   struct tm *now = localtime(&epoch);
   bool night = s_mode == 1 || (s_mode == 2 && (now->tm_hour >= 19 || now->tm_hour < 7));
-  Palette p = palette(night);
-  reload_background_bitmap(night);
+  uint32_t day_key = (uint32_t)(now->tm_year * 366 + now->tm_yday);
+  int fish_variant = selection_resolve(s_fish_color, s_scene, 6, day_key, 0x51f15e0a);
+  int background_variant = selection_resolve(s_background, s_scene, 4, day_key, 0x9b8d28ca);
+  s_render_scene = background_variant;
+  Palette p = palette(background_variant, night);
+  reload_fish_bitmap(fish_variant);
+  reload_background_bitmap(background_variant, night);
   if (s_background_bitmap) {
     graphics_context_set_compositing_mode(ctx, GCompOpAssign);
     graphics_draw_bitmap_in_rect(ctx, s_background_bitmap, bounds);
@@ -568,7 +629,8 @@ static void face_update(Layer *layer, GContext *ctx) {
     draw_small_fish(ctx, w / 4 - 17 + school_shift, h / 4 + 11, 3, p.detail, p.fish);
     draw_small_fish(ctx, w * 3 / 4 - school_shift, h / 3, 4, p.detail, p.fish);
   }
-  draw_clock_fish(ctx, w, h, p, now);
+  draw_scene_life(ctx, w, h, p);
+  draw_clock_fish(ctx, w, h, palette(fish_variant, night), now);
   draw_battery_fish(ctx, w, h, p, night);
   draw_date(ctx, w, h, p, now, night);
 }
@@ -602,11 +664,22 @@ static void inbox(DictionaryIterator *iterator, void *context) {
   if ((tuple = dict_find(iterator, MESSAGE_KEY_SETTING_SCENE))) {
     int value = tuple->value->int32;
     if (value >= 0 && value <= 3) {
-      if (s_scene != value) {
-        s_scene = value;
-        reload_fish_bitmap();
-      }
+      s_scene = value;
       persist_write_int(PERSIST_SCENE, value);
+    }
+  }
+  if ((tuple = dict_find(iterator, MESSAGE_KEY_SETTING_FISH_COLOR))) {
+    int value = tuple->value->int32;
+    if (value >= 0 && value <= 7) {
+      s_fish_color = value;
+      persist_write_int(PERSIST_FISH_COLOR, value);
+    }
+  }
+  if ((tuple = dict_find(iterator, MESSAGE_KEY_SETTING_BACKGROUND))) {
+    int value = tuple->value->int32;
+    if (value >= 0 && value <= 5) {
+      s_background = value;
+      persist_write_int(PERSIST_BACKGROUND, value);
     }
   }
   if ((tuple = dict_find(iterator, MESSAGE_KEY_SETTING_DATE))) {
@@ -630,6 +703,11 @@ static void inbox(DictionaryIterator *iterator, void *context) {
 
 static void init(void) {
   s_scene = persist_read_int(PERSIST_SCENE);
+  if (s_scene < 0 || s_scene > 3) s_scene = 0;
+  if (persist_exists(PERSIST_FISH_COLOR)) s_fish_color = persist_read_int(PERSIST_FISH_COLOR);
+  if (persist_exists(PERSIST_BACKGROUND)) s_background = persist_read_int(PERSIST_BACKGROUND);
+  if (s_fish_color < 0 || s_fish_color > 7) s_fish_color = 0;
+  if (s_background < 0 || s_background > 5) s_background = 0;
   s_date = persist_read_int(PERSIST_DATE);
   if (persist_exists(PERSIST_MODE)) s_mode = persist_read_int(PERSIST_MODE);
   if (persist_exists(PERSIST_MOTION)) s_motion = persist_read_bool(PERSIST_MOTION);
@@ -639,7 +717,6 @@ static void init(void) {
   s_face = layer_create(layer_get_bounds(window_get_root_layer(s_window)));
   layer_set_update_proc(s_face, face_update);
   layer_add_child(window_get_root_layer(s_window), s_face);
-  reload_fish_bitmap();
   window_stack_push(s_window, true);
   tick_timer_service_subscribe(MINUTE_UNIT, tick_handler);
   accel_tap_service_subscribe(tap_handler);

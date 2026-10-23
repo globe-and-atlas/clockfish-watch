@@ -1,6 +1,6 @@
 {
   "name": "clockfish-watch",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "private": true,
   "author": "Daniel Bally",
   "keywords": [
@@ -26,7 +26,9 @@
       "SETTING_DATE",
       "SETTING_MOTION",
       "SETTING_MODE",
-      "SETTING_BATTERY"
+      "SETTING_BATTERY",
+      "SETTING_FISH_COLOR",
+      "SETTING_BACKGROUND"
     ],
     "resources": {
       "media": [
@@ -69,6 +71,26 @@
           "type": "png",
           "name": "FISH_GABBRO_GRAYSCALE",
           "file": "images/fish-gabbro-grayscale.png"
+        },
+        {
+          "type": "png",
+          "name": "FISH_EMERY_VIOLET",
+          "file": "images/fish-emery-violet.png"
+        },
+        {
+          "type": "png",
+          "name": "FISH_EMERY_SEA_GREEN",
+          "file": "images/fish-emery-sea-green.png"
+        },
+        {
+          "type": "png",
+          "name": "FISH_GABBRO_VIOLET",
+          "file": "images/fish-gabbro-violet.png"
+        },
+        {
+          "type": "png",
+          "name": "FISH_GABBRO_SEA_GREEN",
+          "file": "images/fish-gabbro-sea-green.png"
         },
         {
           "type": "png",

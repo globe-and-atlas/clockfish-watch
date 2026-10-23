@@ -19,3 +19,7 @@ The wearer found 0.3.0 too angular and the time crowded. Version 0.4.0 increases
 ## 2026-10-22: Native pixel-art resources for the concept style
 
 The original four-panel concept and motion storyboard were recovered from this conversation and saved in `assets/reference/`. Version 0.5.0 derives a transparent fish cutout and four fish-free aquarium plates from that art direction, then quantizes them to Pebble's four channel levels at each target resolution. This replaces the polygonal fish and sparse procedural scenery in the usual rendering path. Keep time, date, and battery as live native text and shapes so they remain accurate and configurable. Retain vector scenery only as a fallback if a bitmap fails to load.
+
+## 2026-10-22: Independent color and scenery controls
+
+Keep the old scene setting as the base preset. New fish and background controls default to Match aquarium, preserving existing appearances after an upgrade. Six fish colors and four aquarium backgrounds can be mixed. Separate salted hashes choose fish and background for each local calendar day when Random daily is selected; this gives variety without a distracting change on every minute tick. Draw small native sea creatures and bubbles over every background, including grayscale, so these elements remain visible regardless of the art plate.

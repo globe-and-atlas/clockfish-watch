@@ -10,6 +10,24 @@ function configuration() {
       {label: 'Midnight reef', value: '2'},
       {label: 'Grayscale', value: '3'}
     ]},
+    {type: 'select', messageKey: 'SETTING_FISH_COLOR', label: 'Clock fish color', defaultValue: '0', options: [
+      {label: 'Match aquarium', value: '0'},
+      {label: 'Orange', value: '1'},
+      {label: 'Blue', value: '2'},
+      {label: 'Turquoise', value: '3'},
+      {label: 'Grayscale', value: '4'},
+      {label: 'Violet', value: '5'},
+      {label: 'Sea green', value: '6'},
+      {label: 'Random daily', value: '7'}
+    ]},
+    {type: 'select', messageKey: 'SETTING_BACKGROUND', label: 'Background', defaultValue: '0', options: [
+      {label: 'Match aquarium', value: '0'},
+      {label: 'Castle', value: '1'},
+      {label: 'Kelp forest', value: '2'},
+      {label: 'Reef', value: '3'},
+      {label: 'Grayscale', value: '4'},
+      {label: 'Random daily', value: '5'}
+    ]},
     {type: 'select', messageKey: 'SETTING_MODE', label: 'Day / night', defaultValue: '2', options: [
       {label: 'Always day', value: '0'},
       {label: 'Always night', value: '1'},
@@ -45,6 +63,8 @@ function settingsMessage(raw) {
   try { saved = JSON.parse(raw) || {}; } catch (error) { saved = {}; }
   return {
     SETTING_SCENE: asInt(saved.SETTING_SCENE, 0, 3, 0),
+    SETTING_FISH_COLOR: asInt(saved.SETTING_FISH_COLOR, 0, 7, 0),
+    SETTING_BACKGROUND: asInt(saved.SETTING_BACKGROUND, 0, 5, 0),
     SETTING_DATE: asInt(saved.SETTING_DATE, 0, 3, 0),
     SETTING_MODE: asInt(saved.SETTING_MODE, 0, 2, 2),
     SETTING_BATTERY: asToggle(saved.SETTING_BATTERY, 1),

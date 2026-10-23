@@ -1,5 +1,25 @@
 # Clockfish watchface
 
+## Independent fish and aquarium choices — 2026-10-22
+
+- [x] Existing scene presets remain the default after an upgrade.
+- [x] Fish color offers Match aquarium, Orange, Blue, Turquoise, Grayscale, Violet, Sea green, and Random daily.
+- [x] Background offers Match scene, Castle, Kelp, Reef, Grayscale, and Random daily.
+- [x] Random fish color is stable within one local calendar day.
+- [x] Random background is stable within one local calendar day.
+- [x] Fish color can differ from background theme on Emery.
+- [x] Fish color can differ from background theme on Gabbro.
+- [x] Every background shows at least one small sea creature outside the clock fish.
+- [x] Every background shows visible bubbles outside the clock fish.
+- [x] Time digits remain readable in mixed color combinations on Emery.
+- [x] Time digits remain readable in mixed color combinations on Gabbro.
+- [x] Date choices remain Off, YYYY-MM-DD, MM/DD/YYYY, and DD/MM/YYYY.
+- [x] A dual-target PBW contains the new settings.
+- [x] Fresh native screenshots show a mixed combination on each target.
+- [x] A fresh verifier reviews the settings and native screenshots.
+
+Deliver a local preview; physical-device behavior and RePebble publication require separate verification.
+
 ## Pixel illustration sprite pass — 2026-10-22
 
 - [x] The original aquarium concept images are saved in the project as references.
