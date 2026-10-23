@@ -28,6 +28,14 @@ function configuration() {
       {label: 'Grayscale', value: '4'},
       {label: 'Random daily', value: '5'}
     ]},
+    {type: 'select', messageKey: 'SETTING_TIME_FONT', label: 'Time digits', defaultValue: '0', options: [
+      {label: 'Rounded', value: '0'},
+      {label: 'Digital bold', value: '1'},
+      {label: 'Digital fine', value: '2'},
+      {label: 'Classic bold', value: '3'},
+      {label: 'Compact bold', value: '4'},
+      {label: 'Tall light', value: '5'}
+    ]},
     {type: 'select', messageKey: 'SETTING_MODE', label: 'Day / night', defaultValue: '2', options: [
       {label: 'Always day', value: '0'},
       {label: 'Always night', value: '1'},
@@ -75,6 +83,7 @@ function settingsMessage(raw) {
     SETTING_SCENE: asInt(saved.SETTING_SCENE, 0, 3, 0),
     SETTING_FISH_COLOR: asInt(saved.SETTING_FISH_COLOR, 0, 7, 0),
     SETTING_BACKGROUND: asInt(saved.SETTING_BACKGROUND, 0, 5, 0),
+    SETTING_TIME_FONT: asInt(saved.SETTING_TIME_FONT, 0, 5, 0),
     SETTING_DATE: asInt(saved.SETTING_DATE, 0, 3, 0),
     SETTING_MODE: asInt(saved.SETTING_MODE, 0, 2, 2),
     SETTING_BATTERY: asToggle(saved.SETTING_BATTERY, 1),

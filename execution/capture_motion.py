@@ -41,6 +41,7 @@ def capture(platform: str) -> None:
         f"{keys['SETTING_SCENE']}=0", f"{keys['SETTING_DATE']}=1",
         f"{keys['SETTING_MODE']}=0", f"{keys['SETTING_FISH_COLOR']}=0",
         f"{keys['SETTING_BACKGROUND']}=0", f"{keys['SETTING_MOTION']}=0",
+        f"{keys['SETTING_TIME_FONT']}=0",
     )
     print(screenshot(platform, "rest").relative_to(ROOT))
     run("send-app-message", "--emulator", platform, "--int", f"{keys['SETTING_MOTION']}=1")

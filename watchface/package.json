@@ -1,6 +1,6 @@
 {
   "name": "clockfish-watch",
-  "version": "0.7.1",
+  "version": "0.8.0",
   "private": true,
   "author": "Daniel Bally",
   "keywords": [
@@ -28,7 +28,8 @@
       "SETTING_MODE",
       "SETTING_BATTERY",
       "SETTING_FISH_COLOR",
-      "SETTING_BACKGROUND"
+      "SETTING_BACKGROUND",
+      "SETTING_TIME_FONT"
     ],
     "resources": {
       "media": [

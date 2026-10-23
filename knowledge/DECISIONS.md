@@ -31,3 +31,7 @@ Use Still, Gentle, and Lively rather than an on/off motion toggle. Gentle and Li
 ## 2026-10-22: Calmer wrist motion
 
 A three-second glance beginning at a uniformly random phase of the ambient cycle is the comparison model. With six redraw frames per burst, the old Gentle/Lively settings overlap an estimated 25%/39% of glances. Version 0.7.1 reduces those estimates to 18%/29% by spacing bursts to about 33/17 seconds. It also spaces automatic clock-fish glides to about 9.8/5.1 minutes. These are design estimates, not measured wearer attention, battery use, or physical-watch behavior. Keep tap glides available. A glide begins in the fish's current facing direction, turns at its outermost point, and returns with smaller horizontal and vertical travel. Keep the live time at a fixed body offset while the sprite turns; keep the battery fish stationary. Ambient bubble travel wraps across two 27-pixel spacings to maintain the alternating bubble pattern between bursts.
+
+## 2026-10-23: Selectable time fonts
+
+Use six Pebble system-font mappings for the live time so font selection adds no packaged font resources. Keep the 0.7.1 Bitham mapping at index 0 for saved-setting compatibility. Use target-specific sizes where needed: a 42-point bold Bitham fits Round 2, while Time 2 needs the smaller 34-point medium numeral font for the same choice. Select, validate, and persist the font independently of scene and motion. Native 23:58 captures on both targets define the width check; emulator restart confirms the stored choice survives relaunch.

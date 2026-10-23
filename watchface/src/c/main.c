@@ -3,7 +3,7 @@
 #include "motion.h"
 
 enum { PERSIST_SCENE = 1, PERSIST_DATE, PERSIST_MOTION, PERSIST_MODE, PERSIST_BATTERY,
-       PERSIST_FISH_COLOR, PERSIST_BACKGROUND, PERSIST_ANIMATION };
+       PERSIST_FISH_COLOR, PERSIST_BACKGROUND, PERSIST_ANIMATION, PERSIST_TIME_FONT };
 
 typedef struct {
   GColor water, deep, sand, plant, detail, fish, fin, numeral, bubble, battery;
@@ -26,6 +26,7 @@ static int s_render_scene;
 static int s_fish_color;
 static int s_background;
 static int s_date;
+static int s_time_font;
 static int s_mode = 2;
 static int s_motion = 1;
 static bool s_battery_visible = true;
@@ -35,6 +36,21 @@ static int s_ambient_frame = -1;
 static int s_ambient_cycles;
 
 static GColor color(uint32_t rgb) { return GColorFromHEX(rgb); }
+
+static GFont time_font(int width) {
+  const bool round = width >= 240;
+  switch (s_time_font) {
+    case 1: return fonts_get_system_font(round ? FONT_KEY_LECO_36_BOLD_NUMBERS :
+                                                FONT_KEY_LECO_32_BOLD_NUMBERS);
+    case 2: return fonts_get_system_font(FONT_KEY_LECO_28_LIGHT_NUMBERS);
+    case 3: return fonts_get_system_font(round ? FONT_KEY_BITHAM_42_BOLD :
+                                                FONT_KEY_BITHAM_34_MEDIUM_NUMBERS);
+    case 4: return fonts_get_system_font(FONT_KEY_GOTHIC_28_BOLD);
+    case 5: return fonts_get_system_font(FONT_KEY_BITHAM_42_LIGHT);
+    default: return fonts_get_system_font(round ? FONT_KEY_BITHAM_34_MEDIUM_NUMBERS :
+                                                 FONT_KEY_BITHAM_30_BLACK);
+  }
+}
 
 static Palette palette(int scene, bool night) {
   Palette p;
@@ -478,8 +494,7 @@ static void draw_clock_fish_vector(GContext *ctx, int w, int h, Palette p, const
   }
   graphics_context_set_text_color(ctx, p.numeral);
   graphics_draw_text(ctx, time_text,
-                     fonts_get_system_font(w >= 240 ? FONT_KEY_LECO_36_BOLD_NUMBERS :
-                                                        FONT_KEY_LECO_32_BOLD_NUMBERS),
+                     time_font(w),
                      GRect(x + 10, middle - 23, body_w - 45, 48),
                      GTextOverflowModeTrailingEllipsis, GTextAlignmentCenter, NULL);
   graphics_context_set_fill_color(ctx, p.numeral);
@@ -576,8 +591,7 @@ static void draw_clock_fish(GContext *ctx, int w, int h, Palette p, const struct
   }
   graphics_context_set_text_color(ctx, s_fish_variant == 3 ? GColorWhite : color(0xFFF1C6));
   graphics_draw_text(ctx, time_text,
-                     fonts_get_system_font(w >= 240 ? FONT_KEY_BITHAM_34_MEDIUM_NUMBERS :
-                                                        FONT_KEY_BITHAM_30_BLACK),
+                     time_font(w),
                      GRect(x + (w >= 240 ? 48 : 42),
                            h / 2 - 28 + fish_bob(), w >= 240 ? 118 : 102, 42),
                      GTextOverflowModeTrailingEllipsis, GTextAlignmentCenter, NULL);
@@ -762,6 +776,13 @@ static void inbox(DictionaryIterator *iterator, void *context) {
     int value = tuple->value->int32;
     if (value >= 0 && value <= 3) { s_date = value; persist_write_int(PERSIST_DATE, value); }
   }
+  if ((tuple = dict_find(iterator, MESSAGE_KEY_SETTING_TIME_FONT))) {
+    int value = tuple->value->int32;
+    if (value >= 0 && value <= 5) {
+      s_time_font = value;
+      persist_write_int(PERSIST_TIME_FONT, value);
+    }
+  }
   if ((tuple = dict_find(iterator, MESSAGE_KEY_SETTING_MODE))) {
     int value = tuple->value->int32;
     if (value >= 0 && value <= 2) { s_mode = value; persist_write_int(PERSIST_MODE, value); }
@@ -788,6 +809,8 @@ static void init(void) {
   if (s_fish_color < 0 || s_fish_color > 7) s_fish_color = 0;
   if (s_background < 0 || s_background > 5) s_background = 0;
   s_date = persist_read_int(PERSIST_DATE);
+  if (persist_exists(PERSIST_TIME_FONT)) s_time_font = persist_read_int(PERSIST_TIME_FONT);
+  if (s_time_font < 0 || s_time_font > 5) s_time_font = 0;
   if (persist_exists(PERSIST_MODE)) s_mode = persist_read_int(PERSIST_MODE);
   if (persist_exists(PERSIST_ANIMATION)) s_motion = persist_read_int(PERSIST_ANIMATION);
   else if (persist_exists(PERSIST_MOTION)) s_motion = persist_read_bool(PERSIST_MOTION) ? 1 : 0;

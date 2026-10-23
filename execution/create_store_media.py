@@ -31,7 +31,21 @@ FRAMES_071 = (
     ("reef", 900),
     ("grayscale", 900),
 )
-VERSIONS = {"0.7.0": FRAMES_070, "0.7.1": FRAMES_071}
+FRAMES_080 = (
+    ("font-rounded", 850),
+    ("calm-early", 220),
+    ("calm-turn", 220),
+    ("calm-return", 220),
+    ("font-digital-bold", 850),
+    ("font-digital-fine", 850),
+    ("font-classic-bold", 850),
+    ("font-compact-bold", 850),
+    ("font-tall-light", 850),
+    ("kelp", 850),
+    ("reef", 850),
+    ("grayscale", 850),
+)
+VERSIONS = {"0.7.0": FRAMES_070, "0.7.1": FRAMES_071, "0.8.0": FRAMES_080}
 
 
 def create(platform: str, version: str) -> Path:
@@ -65,7 +79,7 @@ def create(platform: str, version: str) -> Path:
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--version", choices=tuple(VERSIONS), default="0.7.1")
+    parser.add_argument("--version", choices=tuple(VERSIONS), default="0.8.0")
     args = parser.parse_args()
     for platform_name in SIZES:
         result = create(platform_name, args.version)
