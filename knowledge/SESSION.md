@@ -53,3 +53,4 @@
 - 2026-10-22 22:15 — commit: Calm Clockfish wrist motion and publish 0.7.1 | DEPLOY.md,README.md,execution/capture_motion.py,execution/create_store_media.py,knowledge/DECISIONS.md
 - 2026-10-23 08:30 — commit: Add six Clockfish time fonts and publish 0.8.0 | DEPLOY.md,README.md,execution/capture_fonts.py,execution/capture_motion.py,execution/capture_native.py
 - 2026-10-23 08:36 — commit: Confirm Clockfish public galleries | DEPLOY.md,knowledge/SESSION.md,task.md
+- 2026-10-23 08:38 — commit: Correct Round 2 font preview timing | knowledge/ERRORS.md,knowledge/INDEX.md,knowledge/SESSION.md,knowledge/procedural/native_capture.md,media/native/gabbro-font-digital-fine.png
