@@ -24,7 +24,7 @@ static Palette palette(bool night) {
   Palette p;
   if (s_scene == 1) {
     p = (Palette){color(0x0A5262), color(0x073746), color(0x174E4B),
-      color(0x2F996E), color(0x97CFC1), color(0x103E56), color(0x52A9AC),
+      color(0x2F996E), color(0x97CFC1), color(0x175A81), color(0x6DD6BD),
       color(0xFFFFFF), color(0xD5F6E5), color(0xE7B64E)};
   } else if (s_scene == 2) {
     p = (Palette){color(0x091536), color(0x050B21), color(0x242457),
@@ -36,7 +36,7 @@ static Palette palette(bool night) {
       color(0xFFFFFF), color(0xFFFFFF), color(0x555555)};
   } else {
     p = (Palette){color(0x39AEDD), color(0x267FAF), color(0xE9D19A),
-      color(0x399951), color(0xDCE4D5), color(0x145577), color(0xE98943),
+      color(0x399951), color(0xDCE4D5), color(0xA34926), color(0xF1AC55),
       color(0xFFFFFF), color(0xFFFFFF), color(0xE7B64E)};
   }
   if (!night && s_scene == 2) {
@@ -97,20 +97,31 @@ static void draw_plants(GContext *ctx, int w, int h, Palette p) {
   for (int side = 0; side < 2; side++) {
     int x = side ? right : left;
     for (int stem = 0; stem < (s_scene == 1 ? 4 : 3); stem++) {
-      int root = x + (stem - 1) * 10;
-      int top = bottom - (s_scene == 1 ? 70 : 46) - stem * 9;
-      int bend = side ? -7 : 7;
-      int tip = root + bend * (stem + 1) / 2;
-      line(ctx, p.plant, root, bottom, tip, top, s_scene == 1 ? 4 : 3);
-      for (int leaf = 0; leaf < 3; leaf++) {
-        int yy = bottom - 17 - leaf * 17;
-        if (yy <= top + 5) continue;
+      int root = x + (stem - 1) * (s_scene == 1 ? 12 : 10);
+      int top = bottom - (s_scene == 1 ? 92 : 46) - stem * (s_scene == 1 ? 9 : 6);
+      int tip = root + (side ? -8 : 8) + (stem - 1) * 3;
+      line(ctx, p.deep, root + 1, bottom, tip + 1, top, s_scene == 1 ? 5 : 3);
+      line(ctx, p.plant, root, bottom, tip, top, s_scene == 1 ? 3 : 2);
+      for (int leaf = 0; leaf < (s_scene == 1 ? 4 : 2); leaf++) {
+        int yy = bottom - 16 - leaf * (s_scene == 1 ? 19 : 18);
+        if (yy <= top + 8) continue;
         int stem_x = root + (tip - root) * (bottom - yy) / (bottom - top);
         int spread = (leaf % 2 ? -1 : 1) * (side ? -1 : 1);
-        graphics_context_set_fill_color(ctx, s_scene == 1 && leaf % 2 ? p.detail : p.plant);
-        fill_triangle(ctx, GPoint(stem_x, yy + 5),
-                      GPoint(stem_x + spread * 15, yy - 8),
-                      GPoint(stem_x + spread * 4, yy + 1));
+        int length = s_scene == 1 ? 23 : 13;
+        int rise = s_scene == 1 ? 17 : 10;
+        GPoint blade[] = {
+          GPoint(stem_x, yy + 5),
+          GPoint(stem_x + spread * (length / 2), yy - 7),
+          GPoint(stem_x + spread * length, yy - rise),
+          GPoint(stem_x + spread * (length - 6), yy - 4),
+          GPoint(stem_x + spread * 4, yy + 7)
+        };
+        GColor blade_color = (s_scene == 1 && leaf % 2) ? p.detail : p.plant;
+        fill_polygon(ctx, blade, 5, blade_color, p.deep);
+        if (s_scene == 1) {
+          line(ctx, p.deep, stem_x, yy + 5,
+               stem_x + spread * (length - 5), yy - rise + 2, 1);
+        }
       }
     }
   }
@@ -188,19 +199,35 @@ static void draw_scene_details(GContext *ctx, int w, int h, Palette p) {
     graphics_fill_circle(ctx, GPoint(w / 2 - 45, floor + 7), 6);
     graphics_fill_circle(ctx, GPoint(w / 2 + 42, floor + 11), 4);
   } else if (s_scene == 2) {
+    GPoint left_rock[] = {
+      GPoint(0, floor + 5), GPoint(0, floor - 8),
+      GPoint(12, floor - 18), GPoint(31, floor - 14),
+      GPoint(47, floor - 3), GPoint(57, floor + 5)
+    };
+    GPoint right_rock[] = {
+      GPoint(w - 58, floor + 5), GPoint(w - 43, floor - 9),
+      GPoint(w - 24, floor - 17), GPoint(w - 7, floor - 12),
+      GPoint(w, floor - 5), GPoint(w, floor + 5)
+    };
+    fill_polygon(ctx, left_rock, 6, p.plant, p.deep);
+    fill_polygon(ctx, right_rock, 6, p.plant, p.deep);
     for (int side = 0; side < 2; side++) {
       int x = side ? w - 27 : 27;
-      line(ctx, p.detail, x, floor, x, floor - 27, 4);
-      line(ctx, p.detail, x, floor - 13, x + (side ? -11 : 11), floor - 29, 3);
-      line(ctx, p.detail, x, floor - 18, x + (side ? 10 : -10), floor - 36, 3);
+      line(ctx, p.detail, x, floor, x, floor - 34, 5);
+      line(ctx, p.detail, x, floor - 13, x + (side ? -13 : 13), floor - 34, 4);
+      line(ctx, p.detail, x, floor - 21, x + (side ? 12 : -12), floor - 46, 4);
+      line(ctx, p.detail, x + (side ? -13 : 13), floor - 34,
+           x + (side ? -18 : 18), floor - 43, 3);
       line(ctx, p.plant, x + (side ? -15 : 15), floor,
-           x + (side ? -20 : 20), floor - 17, 3);
+           x + (side ? -20 : 20), floor - 22, 5);
       for (int branch = 0; branch < 3; branch++) {
         int bx = x + (side ? -1 : 1) * (branch * 5);
-        int by = floor - 8 - branch * 8;
+        int by = floor - 10 - branch * 10;
         graphics_context_set_fill_color(ctx, p.detail);
-        graphics_fill_circle(ctx, GPoint(bx, by), 3);
+        graphics_fill_circle(ctx, GPoint(bx, by), 4);
       }
+      graphics_context_set_fill_color(ctx, p.bubble);
+      graphics_fill_circle(ctx, GPoint(x + (side ? 11 : -11), floor - 41), 2);
     }
     graphics_context_set_fill_color(ctx, p.bubble);
     for (int i = 0; i < 6; i++)
@@ -208,17 +235,26 @@ static void draw_scene_details(GContext *ctx, int w, int h, Palette p) {
     int anemone_x = w / 2 + 43;
     for (int i = -2; i <= 2; i++) {
       line(ctx, p.plant, anemone_x + i * 3, floor + 4,
-           anemone_x + i * 6, floor - 12 - (i % 2) * 5, 2);
+           anemone_x + i * 6, floor - 18 - (i % 2) * 5, 3);
       graphics_context_set_fill_color(ctx, p.detail);
       graphics_fill_circle(ctx, GPoint(anemone_x + i * 6,
-                                      floor - 12 - (i % 2) * 5), 2);
+                                      floor - 18 - (i % 2) * 5), 3);
     }
   } else {
-    graphics_context_set_fill_color(ctx, p.plant);
-    for (int i = 0; i < 3; i++) {
-      int x = 14 + i * 9;
-      graphics_fill_circle(ctx, GPoint(x, floor + 2), 5 + i % 2);
-    }
+    GPoint left_stones[] = {
+      GPoint(0, floor + 9), GPoint(0, floor - 6),
+      GPoint(19, floor - 17), GPoint(37, floor - 12),
+      GPoint(52, floor + 3)
+    };
+    GPoint right_stones[] = {
+      GPoint(w - 56, floor + 8), GPoint(w - 41, floor - 7),
+      GPoint(w - 19, floor - 15), GPoint(w, floor - 5),
+      GPoint(w, floor + 9)
+    };
+    fill_polygon(ctx, left_stones, 5, p.plant, p.detail);
+    fill_polygon(ctx, right_stones, 5, p.plant, p.detail);
+    line(ctx, p.bubble, 16, floor - 9, 27, floor - 12, 1);
+    line(ctx, p.bubble, w - 36, floor - 9, w - 22, floor - 12, 1);
     line(ctx, p.detail, w / 2 + 35, 62, w / 2 + 67, 62, 1);
     for (int i = 0; i < 5; i++) {
       int x = w / 2 + 23 + i * 10;
@@ -285,42 +321,57 @@ static void draw_clock_fish(GContext *ctx, int w, int h, Palette p, const struct
   int middle = y + body_h / 2;
   int tail = w >= 240 ? 23 : 18;
   int flap = s_swim_step >= 0 && s_swim_step % 2 ? 5 : 0;
+  GColor edge = s_scene == 3 ? p.detail : p.deep;
   GPoint tail_points[] = {
-    GPoint(x + 9, middle), GPoint(x - tail - flap, y + 3),
-    GPoint(x - tail + 6, middle - 7), GPoint(x - tail + 6, middle + 7),
-    GPoint(x - tail - flap, y + body_h - 3)
+    GPoint(x + 13, middle - 8), GPoint(x - tail - flap, y + 2),
+    GPoint(x - tail + 9, middle), GPoint(x - tail - flap, y + body_h - 2),
+    GPoint(x + 13, middle + 8)
   };
-  fill_polygon(ctx, tail_points, 5, p.fin, p.detail);
+  fill_polygon(ctx, tail_points, 5, p.fin, edge);
+  line(ctx, edge, x + 8, middle, x - tail + 9, middle, 1);
   GPoint dorsal[] = {
-    GPoint(x + 35, y + 9), GPoint(x + body_w / 2 - 11, y - 16),
-    GPoint(x + body_w / 2 + 11, y - 10), GPoint(x + body_w / 2 + 27, y + 7)
+    GPoint(x + 36, y + 11), GPoint(x + 49, y - 4),
+    GPoint(x + 64, y - 10), GPoint(x + 82, y - 10),
+    GPoint(x + 105, y + 7)
   };
-  fill_polygon(ctx, dorsal, 4, p.fin, p.detail);
+  fill_polygon(ctx, dorsal, 5, p.fin, edge);
+  line(ctx, edge, x + 56, y + 4, x + 65, y - 7, 1);
+  line(ctx, edge, x + 70, y + 3, x + 81, y - 7, 1);
   GPoint ventral[] = {
-    GPoint(x + 54, y + body_h - 8), GPoint(x + 72, y + body_h + 13),
-    GPoint(x + 91, y + body_h - 6)
+    GPoint(x + 49, y + body_h - 10), GPoint(x + 63, y + body_h + 9),
+    GPoint(x + 76, y + body_h + 12), GPoint(x + 97, y + body_h - 8)
   };
-  fill_polygon(ctx, ventral, 3, p.fin, p.detail);
+  fill_polygon(ctx, ventral, 4, p.fin, edge);
   GPoint body[] = {
-    GPoint(x + 4, middle), GPoint(x + 12, y + 12),
-    GPoint(x + 28, y + 5), GPoint(x + body_w / 2, y + 1),
-    GPoint(x + body_w - 34, y + 5), GPoint(x + body_w - 12, y + 15),
-    GPoint(x + body_w, middle - 2), GPoint(x + body_w - 12, y + body_h - 12),
-    GPoint(x + body_w - 35, y + body_h - 4),
-    GPoint(x + body_w / 2, y + body_h - 1),
-    GPoint(x + 28, y + body_h - 5), GPoint(x + 11, y + body_h - 13)
+    GPoint(x + 4, middle), GPoint(x + 10, y + 19),
+    GPoint(x + 19, y + 12), GPoint(x + 34, y + 6),
+    GPoint(x + 51, y + 3), GPoint(x + body_w / 2, y + 2),
+    GPoint(x + body_w - 38, y + 5), GPoint(x + body_w - 21, y + 11),
+    GPoint(x + body_w - 7, y + 21), GPoint(x + body_w, middle - 2),
+    GPoint(x + body_w - 7, y + body_h - 20),
+    GPoint(x + body_w - 21, y + body_h - 10),
+    GPoint(x + body_w - 39, y + body_h - 5),
+    GPoint(x + body_w / 2, y + body_h - 2),
+    GPoint(x + 50, y + body_h - 4), GPoint(x + 33, y + body_h - 8),
+    GPoint(x + 18, y + body_h - 14), GPoint(x + 10, y + body_h - 20)
   };
-  fill_polygon(ctx, body, 12, p.fish, p.detail);
+  fill_polygon(ctx, body, 18, p.fish, edge);
   GPoint highlight[] = {
-    GPoint(x + 20, y + 17), GPoint(x + 29, y + 9),
-    GPoint(x + body_w / 2, y + 6), GPoint(x + body_w - 39, y + 10),
-    GPoint(x + body_w - 30, y + 16)
+    GPoint(x + 21, y + 18), GPoint(x + 35, y + 10),
+    GPoint(x + 53, y + 7), GPoint(x + body_w - 39, y + 10),
+    GPoint(x + body_w - 26, y + 17), GPoint(x + 47, y + 14)
   };
-  fill_polygon(ctx, highlight, 5, p.fin, p.fin);
-  line(ctx, p.detail, x + body_w - 26, middle - 12,
-       x + body_w - 32, middle - 3, 1);
-  line(ctx, p.detail, x + body_w - 32, middle - 3,
-       x + body_w - 27, middle + 10, 1);
+  fill_polygon(ctx, highlight, 6, p.fin, p.fin);
+  GPoint pectoral[] = {
+    GPoint(x + body_w - 32, middle + 7),
+    GPoint(x + body_w - 51, middle + 20),
+    GPoint(x + body_w - 48, middle + 4)
+  };
+  fill_polygon(ctx, pectoral, 3, p.fin, edge);
+  line(ctx, edge, x + body_w - 30, middle - 11,
+       x + body_w - 35, middle - 3, 1);
+  line(ctx, edge, x + body_w - 35, middle - 3,
+       x + body_w - 32, middle + 10, 1);
 
   char time_text[8];
   strftime(time_text, sizeof(time_text), clock_is_24h_style() ? "%H:%M" : "%I:%M", now);
@@ -331,13 +382,13 @@ static void draw_clock_fish(GContext *ctx, int w, int h, Palette p, const struct
   graphics_draw_text(ctx, time_text, fonts_get_system_font(FONT_KEY_LECO_38_BOLD_NUMBERS),
                      GRect(x + 2, middle - 28, body_w - 26, 56),
                      GTextOverflowModeTrailingEllipsis, GTextAlignmentCenter, NULL);
-  graphics_context_set_fill_color(ctx, p.detail);
-  graphics_fill_circle(ctx, GPoint(x + body_w - 18, middle - 8), 5);
-  graphics_context_set_fill_color(ctx, p.fish);
+  graphics_context_set_fill_color(ctx, p.numeral);
+  graphics_fill_circle(ctx, GPoint(x + body_w - 18, middle - 8), 6);
+  graphics_context_set_fill_color(ctx, edge);
   graphics_fill_circle(ctx, GPoint(x + body_w - 17, middle - 8), 3);
   graphics_context_set_fill_color(ctx, p.numeral);
   graphics_fill_circle(ctx, GPoint(x + body_w - 16, middle - 9), 1);
-  line(ctx, p.detail, x + body_w - 11, middle + 7,
+  line(ctx, edge, x + body_w - 11, middle + 7,
        x + body_w - 4, middle + 8, 1);
 }
 

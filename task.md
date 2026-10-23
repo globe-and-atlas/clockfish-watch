@@ -1,5 +1,25 @@
 # Clockfish watchface
 
+## Illustrated aquarium pass — 2026-10-22
+
+- [x] The main fish has a rounded body silhouette at 200x228.
+- [x] The main fish has a distinct tail at 200x228.
+- [x] The main fish has a distinct eye at 200x228.
+- [x] The time is readable inside the main fish on emery.
+- [x] The time is readable inside the main fish on gabbro.
+- [x] The kelp scene shows broad alternating leaves on emery.
+- [x] The kelp scene shows broad alternating leaves on gabbro.
+- [x] The castle scene retains a visible castle on emery.
+- [x] The reef scene retains visible coral on emery.
+- [x] The grayscale scene keeps readable time on both targets.
+- [x] All four date choices remain in phone settings.
+- [x] A 0.3.0 PBW contains emery and gabbro builds.
+- [x] Fresh native screenshots show all four scenes on emery.
+- [x] Fresh native screenshots show all four scenes on gabbro.
+- [x] A fresh verifier reviews the illustrated aquarium pass.
+
+This pass is a local visual candidate for the illustrated aquarium direction chosen by the wearer. Store publication remains a separate decision after native and physical watch review.
+
 ## Aquarium visual rebuild — 2026-10-22
 
 - [x] The clock body has a tapered fish silhouette.
