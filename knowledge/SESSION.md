@@ -1,12 +1,17 @@
 # Current session
 
-**Goal:** Add independent fish-color and aquarium-background choices, daily random options, and visible sea life to Clockfish on Pebble Time 2 and Round 2.
+**Goal:** Add Still, Gentle, and Lively motion with periodic aquarium life and occasional clock-fish glides on Pebble Time 2 and Round 2.
 **Agent:** OpenAI Codex
 **Handoff-from:** OpenAI Codex
 **Handoff-type:** continuation
-**Status:** 0.6.0 customization local preview complete. Independent review found no concrete defect in settings, native captures, or the dual-target PBW.
+**Status:** 0.7.0 living aquarium local preview built and independently reviewed. No RePebble publication or physical-watch validation has been performed for this version.
 
 ## Checkpoints
+- 2026-10-22: Built 0.7.0 for emery and gabbro, captured all four scene/date presets on each target, and inspected left/right rounded-time captures. C motion/selection, JS settings, asset, strict health, and PBW metadata checks pass. The blue fish body now differs from kelp water. A fresh verifier found no local-preview blocker; saved-setting migration end-to-end, device battery/motion, and store state remain unverified.
+- 2026-10-22: Wearer asked for slightly smaller or rounder time glyphs so the clock flows with the illustrated fish. Switching the live overlay to rounded Gothic numerals and checking both endpoints against the body at native sizes.
+- 2026-10-22: Wearer allowed fish to point in different directions as long as time and battery remain legible. Adding mirrored left-facing clock-fish assets and alternating left/right glides; time text remains a separate upright overlay, and battery fish stays anchored.
+- 2026-10-22: Wearer noticed fish body and water sharing a palette color. Confirmed the blue fish body and kelp water both map to Pebble RGB (0,0,85). Generated a medium-cobalt source fish with dark outline; integrating it selectively for blue and violet so the other colorways keep their established contrast.
+- 2026-10-22: Started 0.7.0 motion pass. Plan: migrate saved toggle Off/On to Still/Gentle, animate short ambient bursts at different intervals, let bubbles rise and background creatures move, and trigger occasional bounded clock-fish glides. Native frame capture on Emery and Gabbro will establish emulator behavior.
 - 2026-10-22: Independent verifier checked fixed and daily-random selection, compatibility defaults, four scene captures on each target, mixed/random combinations, package metadata, and focused tests. No local-preview defect found. Daily rollover was exercised in host C tests, not by crossing midnight in emulator. Physical-watch behavior and store publication remain unverified.
 - 2026-10-22: Added six independently selectable fish colors, four independent background choices, and separate local-day random selection. Preserved existing scene defaults. Added visible small fish, jellyfish, crab, and bubble overlays; moved crab inward on Round 2 after native inspection. Refreshed four standard scene captures and mixed/random captures on both targets. C selection tests, JS settings tests, asset tests, and dual-target build pass; copied 0.6.0 PBW. Fresh review pending.
 - 2026-10-22: Started 0.6.0 fish/background customization. Existing scene remains the default for upgraded users. Independent fish/background settings will offer fixed choices or stable daily random choices. Native overlays will ensure small critters and bubbles remain visible in each scene.
@@ -24,9 +29,9 @@
 - 2026-10-22 17:20: Added a bounded vertical arc to the swim. Final emery tap capture shifted the fish left and up; the settled frame returned to center. Rebuilt and recaptured all nine native scene/night screenshots. Clean health check and settings tests passed.
 
 ## Handoff
-- **Completed:** Dual-target 0.6.0 preview with separate fish/background selection, daily random choices, visible sea life, local PBW, fresh native screenshots, passing settings/selection/asset tests, and independent review.
-- **Next:** Get wearer feedback on the mixed styles; verify appearance and motion on physical Pebble Time 2 and Round 2; prepare store media if publication is requested.
-- **Limit:** Emulator results do not establish physical-device battery life, motion quality, or store publication.
+- **Completed:** Dual-target 0.7.0 preview with three motion levels, living aquarium bursts, left/right fish glides, rounded live digits, cobalt fish contrast, refreshed native screenshots, passing focused tests, and fresh independent review.
+- **Next:** Check sustained motion and power on physical Pebble Time 2 and Round 2; prepare store media and verify RePebble state if publication is requested.
+- **Limit:** Emulator results do not establish physical-device battery life, motion quality, saved-setting migration on an existing install, or store publication.
 
 ## Checkpoint Log
 
@@ -36,3 +41,4 @@
 - 2026-10-22 20:03 — commit: Prototype rounded Clockfish proportions | README.md,knowledge/DECISIONS.md,knowledge/SESSION.md,media/native/emery-castle-night.png,media/native/emery-castle.png
 - 2026-10-22 20:18 — commit: Illustrate Clockfish with native pixel art | README.md,assets/reference/four-concepts.png,assets/reference/motion-storyboard.png,assets/source/background-castle.png,assets/source/background-grayscale.png
 - 2026-10-22 20:32 — commit: Add independent Clockfish colors and aquarium life | README.md,execution/capture_native.py,execution/generate_fish_assets.py,knowledge/DECISIONS.md,knowledge/INDEX.md
+- 2026-10-22 21:40 — commit: Animate Clockfish aquarium and refine time lettering | README.md,assets/source/fish-blue-contrast-generated.png,execution/capture_native.py,execution/generate_fish_assets.py,knowledge/DECISIONS.md

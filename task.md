@@ -1,5 +1,40 @@
 # Clockfish watchface
 
+## Living aquarium motion — 2026-10-22
+
+- [x] Motion settings offer Still, Gentle, and Lively.
+- [x] An existing saved Motion Off choice remains Still after upgrade.
+- [x] An existing saved Motion On choice becomes Gentle after upgrade.
+- [x] Still schedules no ambient animation.
+- [x] Gentle animates bubbles during brief ambient bursts.
+- [x] Lively animates bubbles more often than Gentle.
+- [x] Small fish move during ambient bursts.
+- [x] The jellyfish pulses during ambient bursts.
+- [x] The crab occasionally scuttles during ambient bursts.
+- [x] The clock fish stays inside the screen during automatic glides on Emery.
+- [x] The clock fish stays inside the screen during automatic glides on Gabbro.
+- [x] The clock digits move with the clock fish.
+- [x] The clock fish can face left during a glide.
+- [x] The clock fish can face right during a glide.
+- [x] Clock digits stay upright in both fish directions.
+- [x] The time uses rounded numerals within the clock fish on Emery.
+- [x] The time uses rounded numerals within the clock fish on Gabbro.
+- [x] The first and last time digits clear the fish outline on Emery.
+- [x] The first and last time digits clear the fish outline on Gabbro.
+- [x] Battery percentage stays upright in both fish directions.
+- [x] A tap starts a clock-fish glide when motion is enabled.
+- [x] Still prevents a tap-triggered glide.
+- [x] The date remains readable during motion.
+- [x] The blue fish body differs from dark kelp water at native size.
+- [x] The blue fish clock digits remain readable at native size.
+- [x] Mixed fish/background choices retain a visible fish silhouette.
+- [x] A dual-target PBW contains the motion setting.
+- [x] Native motion frames are captured on Emery.
+- [x] Native motion frames are captured on Gabbro.
+- [x] A fresh verifier reviews the motion behavior.
+
+Keep animation bursts short to limit redraws and preserve time legibility. Package a local preview; physical battery and RePebble state require separate checks.
+
 ## Independent fish and aquarium choices — 2026-10-22
 
 - [x] Existing scene presets remain the default after an upgrade.

@@ -3,7 +3,7 @@
 from pathlib import Path
 import unittest
 
-from PIL import Image
+from PIL import Image, ImageOps
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -44,10 +44,29 @@ class ArtAssetTests(unittest.TestCase):
                         for channel in pixel
                     ))
 
+    def test_left_facing_fish_sprites_mirror_right_facing_art(self) -> None:
+        for platform in SIZES:
+            for scene in FISH_COLORS:
+                right = IMAGES / f"fish-{platform}-{scene}.png"
+                left = IMAGES / f"fish-{platform}-{scene}-left.png"
+                with self.subTest(platform=platform, scene=scene), \
+                     Image.open(right) as right_image, Image.open(left) as left_image:
+                    self.assertEqual(left_image.size, right_image.size)
+                    self.assertEqual(left_image.tobytes(), ImageOps.mirror(right_image).tobytes())
+
     def test_round_castle_plate_stays_within_decode_budget(self) -> None:
         # A 12 KB castle plate failed on Gabbro with PNG allocation errors.
         path = IMAGES / "background-gabbro-castle-day.png"
         self.assertLess(path.stat().st_size, 9_000)
+
+    def test_blue_body_separates_from_dark_kelp_water(self) -> None:
+        for platform, center in (("emery", (92, 50)), ("gabbro", (108, 58))):
+            path = IMAGES / f"fish-{platform}-kelp.png"
+            with self.subTest(platform=platform), Image.open(path) as image:
+                body = image.convert("RGBA").getpixel(center)
+                self.assertEqual(body[3], 255)
+                self.assertNotEqual(body[:3], (0, 0, 85))
+                self.assertGreaterEqual(body[1] + body[2], 170)
 
 
 if __name__ == "__main__":

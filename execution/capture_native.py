@@ -32,7 +32,8 @@ def capture(platform: str) -> None:
         run("send-app-message", "--emulator", platform, "--int",
             f"{keys['SETTING_SCENE']}={index}", f"{keys['SETTING_DATE']}={index}",
             f"{keys['SETTING_MODE']}={1 if index == 2 else 0}",
-            f"{keys['SETTING_FISH_COLOR']}=0", f"{keys['SETTING_BACKGROUND']}=0")
+            f"{keys['SETTING_FISH_COLOR']}=0", f"{keys['SETTING_BACKGROUND']}=0",
+            f"{keys['SETTING_MOTION']}=0")
         time.sleep(1.0)
         target = output / f"{platform}-{scene}.png"
         run("screenshot", "--emulator", platform, "--no-open", "--no-correction", str(target))

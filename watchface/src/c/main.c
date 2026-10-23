@@ -1,8 +1,9 @@
 #include <pebble.h>
 #include "selection.h"
+#include "motion.h"
 
 enum { PERSIST_SCENE = 1, PERSIST_DATE, PERSIST_MOTION, PERSIST_MODE, PERSIST_BATTERY,
-       PERSIST_FISH_COLOR, PERSIST_BACKGROUND };
+       PERSIST_FISH_COLOR, PERSIST_BACKGROUND, PERSIST_ANIMATION };
 
 typedef struct {
   GColor water, deep, sand, plant, detail, fish, fin, numeral, bubble, battery;
@@ -13,19 +14,24 @@ static Layer *s_face;
 static GBitmap *s_fish_bitmap;
 static GBitmap *s_background_bitmap;
 static int s_fish_variant = -1;
+static bool s_facing_left;
+static bool s_loaded_left;
 static int s_background_variant = -1;
 static bool s_background_night;
 static AppTimer *s_swim_timer;
+static AppTimer *s_ambient_timer;
 static int s_scene;
 static int s_render_scene;
 static int s_fish_color;
 static int s_background;
 static int s_date;
 static int s_mode = 2;
-static bool s_motion = true;
+static int s_motion = 1;
 static bool s_battery_visible = true;
 static int s_battery_percent = 100;
 static int s_swim_step = -1;
+static int s_ambient_frame = -1;
+static int s_ambient_cycles;
 
 static GColor color(uint32_t rgb) { return GColorFromHEX(rgb); }
 
@@ -284,36 +290,51 @@ static void draw_bubbles(GContext *ctx, int w, int h, Palette p) {
   }
 }
 
-static void draw_small_fish(GContext *ctx, int x, int y, int size, GColor body, GColor eye) {
+static void draw_small_fish(GContext *ctx, int x, int y, int size,
+                            GColor body, GColor eye, bool left) {
   graphics_context_set_fill_color(ctx, body);
   graphics_fill_circle(ctx, GPoint(x, y), size);
-  fill_triangle(ctx, GPoint(x - size + 1, y), GPoint(x - size * 2, y - size),
-                GPoint(x - size * 2, y + size));
+  int sign = left ? 1 : -1;
+  fill_triangle(ctx, GPoint(x + sign * (size - 1), y),
+                GPoint(x + sign * size * 2, y - size),
+                GPoint(x + sign * size * 2, y + size));
   graphics_context_set_fill_color(ctx, eye);
-  graphics_fill_circle(ctx, GPoint(x + size / 2, y - 1), 1);
+  graphics_fill_circle(ctx, GPoint(x - sign * size / 2, y - 1), 1);
 }
 
 static void draw_scene_life(GContext *ctx, int w, int h, Palette p) {
-  int drift = s_swim_step < 0 ? 0 : (s_swim_step - 5) / 3;
+  int drift = (s_swim_step < 0 ? 0 : (s_swim_step - 5) / 3) +
+              motion_school_shift(s_motion, s_ambient_frame);
   GColor accent = s_render_scene == 3 ? GColorBlack : p.fin;
   GColor outline = s_render_scene == 3 ? GColorWhite : p.deep;
   int school_y = w >= 240 ? 64 : 47;
-  draw_small_fish(ctx, 41 + drift, school_y, 4, accent, outline);
-  draw_small_fish(ctx, 29 + drift, school_y + 12, 3, p.detail, outline);
+  draw_small_fish(ctx, 41 + drift, school_y, 4, accent, outline, false);
+  draw_small_fish(ctx, 29 + drift, school_y + 12, 3, p.detail, outline, true);
+  if (s_ambient_frame >= 0) {
+    bool moving_left = s_ambient_cycles % 2 == 0;
+    int crossing_x = 18 + s_ambient_frame * (w - 36) / 5;
+    if (moving_left) crossing_x = w - crossing_x;
+    draw_small_fish(ctx, crossing_x, h / 2 + 37, 3, accent, outline, moving_left);
+  }
 
   int jelly_x = w - 42, jelly_y = w >= 240 ? 66 : 45;
   GColor jelly = s_render_scene == 3 ? GColorWhite : color(0xF2A8C9);
   graphics_context_set_fill_color(ctx, jelly);
-  graphics_fill_circle(ctx, GPoint(jelly_x, jelly_y), 7);
+  int jelly_radius = motion_jelly_radius(s_ambient_frame);
+  graphics_fill_circle(ctx, GPoint(jelly_x, jelly_y), jelly_radius);
   graphics_context_set_fill_color(ctx, outline);
   graphics_fill_circle(ctx, GPoint(jelly_x - 2, jelly_y), 1);
   graphics_fill_circle(ctx, GPoint(jelly_x + 2, jelly_y), 1);
-  line(ctx, jelly, jelly_x - 5, jelly_y + 5, jelly_x - 5, jelly_y + 14, 1);
-  line(ctx, jelly, jelly_x, jelly_y + 7, jelly_x, jelly_y + 16, 1);
-  line(ctx, jelly, jelly_x + 5, jelly_y + 5, jelly_x + 5, jelly_y + 14, 1);
+  line(ctx, jelly, jelly_x - 5, jelly_y + jelly_radius - 2,
+       jelly_x - 5, jelly_y + jelly_radius + 7, 1);
+  line(ctx, jelly, jelly_x, jelly_y + jelly_radius,
+       jelly_x, jelly_y + jelly_radius + 9, 1);
+  line(ctx, jelly, jelly_x + 5, jelly_y + jelly_radius - 2,
+       jelly_x + 5, jelly_y + jelly_radius + 7, 1);
 
   // A small crab stays beside the seabed, clear of the battery fish.
-  int crab_x = w - (w >= 240 ? 50 : 32);
+  int crab_x = w - (w >= 240 ? 50 : 32) -
+               motion_crab_shift(s_motion, s_ambient_frame, s_ambient_cycles);
   int crab_y = h - (w >= 240 ? 50 : 36);
   GColor crab_color = s_render_scene == 3 ? GColorWhite :
                       s_render_scene == 0 ? color(0xD44E6A) : color(0xFFAA33);
@@ -335,7 +356,8 @@ static void draw_scene_life(GContext *ctx, int w, int h, Palette p) {
   graphics_context_set_stroke_width(ctx, 1);
   for (int i = 0; i < 5; i++) {
     int x = w - 15 - (i % 2) * 7;
-    int y = h - 49 - i * 27 - (s_swim_step < 0 ? 0 : s_swim_step);
+    int y = h - 49 - i * 27 - motion_bubble_lift(s_motion, s_ambient_frame) -
+            (s_swim_step < 0 ? 0 : s_swim_step);
     graphics_draw_circle(ctx, GPoint(x, y), 2 + i % 2);
   }
 }
@@ -356,9 +378,9 @@ static void draw_light_rays(GContext *ctx, int w, int h, bool night) {
 }
 
 static int fish_shift(int w) {
-  static const int sequence[] = {0, -5, -10, -15, -10, 0, 10, 15, 10, 5, 0};
+  static const int sequence[] = {0, 3, 6, 9, 12, 15, 12, 9, 6, 3, 0};
   if (s_swim_step < 0) return 0;
-  int value = sequence[s_swim_step];
+  int value = sequence[s_swim_step] * (s_facing_left ? -1 : 1);
   // Keep the fuller tail on-screen throughout the swim.
   return w >= 240 ? value * 2 / 3 : value / 2;
 }
@@ -474,7 +496,7 @@ static void draw_clock_fish_vector(GContext *ctx, int w, int h, Palette p, const
        x + body_w - 4, middle + 8, 1);
 }
 
-static uint32_t fish_resource_id(int width, int scene) {
+static uint32_t fish_resource_id(int width, int scene, bool left) {
   static const uint32_t emery[] = {
     RESOURCE_ID_FISH_EMERY_CASTLE, RESOURCE_ID_FISH_EMERY_KELP,
     RESOURCE_ID_FISH_EMERY_REEF, RESOURCE_ID_FISH_EMERY_GRAYSCALE,
@@ -485,17 +507,29 @@ static uint32_t fish_resource_id(int width, int scene) {
     RESOURCE_ID_FISH_GABBRO_REEF, RESOURCE_ID_FISH_GABBRO_GRAYSCALE,
     RESOURCE_ID_FISH_GABBRO_VIOLET, RESOURCE_ID_FISH_GABBRO_SEA_GREEN
   };
+  static const uint32_t emery_left[] = {
+    RESOURCE_ID_FISH_EMERY_CASTLE_LEFT, RESOURCE_ID_FISH_EMERY_KELP_LEFT,
+    RESOURCE_ID_FISH_EMERY_REEF_LEFT, RESOURCE_ID_FISH_EMERY_GRAYSCALE_LEFT,
+    RESOURCE_ID_FISH_EMERY_VIOLET_LEFT, RESOURCE_ID_FISH_EMERY_SEA_GREEN_LEFT
+  };
+  static const uint32_t gabbro_left[] = {
+    RESOURCE_ID_FISH_GABBRO_CASTLE_LEFT, RESOURCE_ID_FISH_GABBRO_KELP_LEFT,
+    RESOURCE_ID_FISH_GABBRO_REEF_LEFT, RESOURCE_ID_FISH_GABBRO_GRAYSCALE_LEFT,
+    RESOURCE_ID_FISH_GABBRO_VIOLET_LEFT, RESOURCE_ID_FISH_GABBRO_SEA_GREEN_LEFT
+  };
   int index = scene >= 0 && scene < 6 ? scene : 0;
-  return width >= 240 ? gabbro[index] : emery[index];
+  return width >= 240 ? (left ? gabbro_left[index] : gabbro[index]) :
+                        (left ? emery_left[index] : emery[index]);
 }
 
 static void reload_fish_bitmap(int variant) {
   if (!s_face) return;
-  if (s_fish_bitmap && s_fish_variant == variant) return;
+  if (s_fish_bitmap && s_fish_variant == variant && s_loaded_left == s_facing_left) return;
   if (s_fish_bitmap) gbitmap_destroy(s_fish_bitmap);
   int width = layer_get_bounds(s_face).size.w;
-  s_fish_bitmap = gbitmap_create_with_resource(fish_resource_id(width, variant));
+  s_fish_bitmap = gbitmap_create_with_resource(fish_resource_id(width, variant, s_facing_left));
   s_fish_variant = variant;
+  s_loaded_left = s_facing_left;
 }
 
 static uint32_t background_resource_id(int width, int scene, bool night) {
@@ -546,10 +580,11 @@ static void draw_clock_fish(GContext *ctx, int w, int h, Palette p, const struct
   }
   graphics_context_set_text_color(ctx, s_fish_variant == 3 ? GColorWhite : color(0xFFF1C6));
   graphics_draw_text(ctx, time_text,
-                     fonts_get_system_font(w >= 240 ? FONT_KEY_LECO_36_BOLD_NUMBERS :
-                                                        FONT_KEY_LECO_32_BOLD_NUMBERS),
-                     GRect(x + (w >= 240 ? 52 : 45), h / 2 - 33 + fish_bob(),
-                           w >= 240 ? 118 : 102, 48),
+                     fonts_get_system_font(w >= 240 ? FONT_KEY_BITHAM_34_MEDIUM_NUMBERS :
+                                                        FONT_KEY_BITHAM_30_BLACK),
+                     GRect(x + (w >= 240 ? (s_facing_left ? 45 : 52) :
+                                             (s_facing_left ? 39 : 45)),
+                           h / 2 - 28 + fish_bob(), w >= 240 ? 118 : 102, 42),
                      GTextOverflowModeTrailingEllipsis, GTextAlignmentCenter, NULL);
 }
 
@@ -625,9 +660,9 @@ static void face_update(Layer *layer, GContext *ctx) {
     draw_scene_details(ctx, w, h, p);
     draw_bubbles(ctx, w, h, p);
     int school_shift = s_swim_step < 0 ? 0 : (s_swim_step - 5) / 2;
-    draw_small_fish(ctx, w / 4 + school_shift, h / 4, 5, p.fin, p.numeral);
-    draw_small_fish(ctx, w / 4 - 17 + school_shift, h / 4 + 11, 3, p.detail, p.fish);
-    draw_small_fish(ctx, w * 3 / 4 - school_shift, h / 3, 4, p.detail, p.fish);
+    draw_small_fish(ctx, w / 4 + school_shift, h / 4, 5, p.fin, p.numeral, false);
+    draw_small_fish(ctx, w / 4 - 17 + school_shift, h / 4 + 11, 3, p.detail, p.fish, true);
+    draw_small_fish(ctx, w * 3 / 4 - school_shift, h / 3, 4, p.detail, p.fish, true);
   }
   draw_scene_life(ctx, w, h, p);
   draw_clock_fish(ctx, w, h, palette(fish_variant, night), now);
@@ -643,16 +678,61 @@ static void swim_frame(void *context) {
 }
 
 static void start_swim(void) {
-  if (!s_motion || s_swim_timer) return;
+  if (s_motion == 0 || s_swim_timer) return;
+  s_facing_left = !s_facing_left;
   s_swim_step = 0;
   layer_mark_dirty(s_face);
   s_swim_timer = app_timer_register(180, swim_frame, NULL);
 }
 
+static void ambient_begin(void *context);
+
+static void schedule_ambient(uint32_t delay_ms) {
+  if (s_motion == 0) return;
+  s_ambient_timer = app_timer_register(delay_ms, ambient_begin, NULL);
+}
+
+static void ambient_frame_tick(void *context) {
+  s_ambient_timer = NULL;
+  if (s_motion == 0) return;
+  if (s_ambient_frame < 5) {
+    s_ambient_frame++;
+    layer_mark_dirty(s_face);
+    s_ambient_timer = app_timer_register(motion_frame_ms(s_motion), ambient_frame_tick, NULL);
+  } else {
+    s_ambient_frame = -1;
+    layer_mark_dirty(s_face);
+    schedule_ambient(motion_ambient_interval_ms(s_motion));
+  }
+}
+
+static void ambient_begin(void *context) {
+  s_ambient_timer = NULL;
+  if (s_motion == 0) return;
+  s_ambient_frame = 0;
+  s_ambient_cycles++;
+  int glide_every = motion_swim_every_cycles(s_motion);
+  if (glide_every > 0 && s_ambient_cycles % glide_every == 0) start_swim();
+  layer_mark_dirty(s_face);
+  s_ambient_timer = app_timer_register(motion_frame_ms(s_motion), ambient_frame_tick, NULL);
+}
+
+static void set_motion_level(int level) {
+  if (s_ambient_timer) app_timer_cancel(s_ambient_timer);
+  if (s_swim_timer) app_timer_cancel(s_swim_timer);
+  s_ambient_timer = NULL;
+  s_swim_timer = NULL;
+  s_ambient_frame = -1;
+  s_swim_step = -1;
+  s_ambient_cycles = 0;
+  s_motion = level;
+  layer_mark_dirty(s_face);
+  if (level > 0) schedule_ambient(4000);
+}
+
 static void tap_handler(AccelAxisType axis, int32_t direction) { start_swim(); }
 static void tick_handler(struct tm *tick_time, TimeUnits units_changed) {
   layer_mark_dirty(s_face);
-  start_swim();
 }
 static void battery_handler(BatteryChargeState state) {
   s_battery_percent = state.charge_percent;
@@ -691,8 +771,11 @@ static void inbox(DictionaryIterator *iterator, void *context) {
     if (value >= 0 && value <= 2) { s_mode = value; persist_write_int(PERSIST_MODE, value); }
   }
   if ((tuple = dict_find(iterator, MESSAGE_KEY_SETTING_MOTION))) {
-    s_motion = tuple->value->int32 != 0;
-    persist_write_bool(PERSIST_MOTION, s_motion);
+    int value = tuple->value->int32;
+    if (value >= 0 && value <= 2) {
+      set_motion_level(value);
+      persist_write_int(PERSIST_ANIMATION, value);
+    }
   }
   if ((tuple = dict_find(iterator, MESSAGE_KEY_SETTING_BATTERY))) {
     s_battery_visible = tuple->value->int32 != 0;
@@ -710,7 +793,9 @@ static void init(void) {
   if (s_background < 0 || s_background > 5) s_background = 0;
   s_date = persist_read_int(PERSIST_DATE);
   if (persist_exists(PERSIST_MODE)) s_mode = persist_read_int(PERSIST_MODE);
-  if (persist_exists(PERSIST_MOTION)) s_motion = persist_read_bool(PERSIST_MOTION);
+  if (persist_exists(PERSIST_ANIMATION)) s_motion = persist_read_int(PERSIST_ANIMATION);
+  else if (persist_exists(PERSIST_MOTION)) s_motion = persist_read_bool(PERSIST_MOTION) ? 1 : 0;
+  if (s_motion < 0 || s_motion > 2) s_motion = 1;
   if (persist_exists(PERSIST_BATTERY)) s_battery_visible = persist_read_bool(PERSIST_BATTERY);
   s_window = window_create();
   window_set_background_color(s_window, GColorBlack);
@@ -724,10 +809,12 @@ static void init(void) {
   battery_handler(battery_state_service_peek());
   app_message_register_inbox_received(inbox);
   app_message_open(128, 32);
+  set_motion_level(s_motion);
 }
 
 static void deinit(void) {
   if (s_swim_timer) app_timer_cancel(s_swim_timer);
+  if (s_ambient_timer) app_timer_cancel(s_ambient_timer);
   accel_tap_service_unsubscribe();
   battery_state_service_unsubscribe();
   tick_timer_service_unsubscribe();

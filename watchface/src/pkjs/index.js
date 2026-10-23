@@ -3,7 +3,7 @@ var Clay = require('@rebble/clay');
 function configuration() {
   return [
     {type: 'heading', defaultValue: 'Clockfish'},
-    {type: 'text', defaultValue: 'Tap the watch to send the clock fish swimming. It rests between swims to save battery.'},
+    {type: 'text', defaultValue: 'Aquarium life moves in short bursts. Tap to send the clock fish gliding when motion is enabled.'},
     {type: 'select', messageKey: 'SETTING_SCENE', label: 'Aquarium scene', defaultValue: '0', options: [
       {label: 'Castle aquarium', value: '0'},
       {label: 'Kelp forest', value: '1'},
@@ -40,7 +40,11 @@ function configuration() {
       {label: 'DD/MM/YYYY', value: '3'}
     ]},
     {type: 'toggle', messageKey: 'SETTING_BATTERY', label: 'Show battery fish', defaultValue: true},
-    {type: 'toggle', messageKey: 'SETTING_MOTION', label: 'Swim on tap and minute change', defaultValue: true},
+    {type: 'select', messageKey: 'SETTING_MOTION', label: 'Aquarium motion', defaultValue: '1', options: [
+      {label: 'Still', value: '0'},
+      {label: 'Gentle', value: '1'},
+      {label: 'Lively', value: '2'}
+    ]},
     {type: 'submit', defaultValue: 'Save to watch'}
   ];
 }
@@ -58,6 +62,12 @@ function asToggle(value, fallback) {
   return fallback;
 }
 
+function asMotion(value) {
+  if (value === false || value === 'false') return 0;
+  if (value === true || value === 'true') return 1;
+  return asInt(value, 0, 2, 1);
+}
+
 function settingsMessage(raw) {
   var saved;
   try { saved = JSON.parse(raw) || {}; } catch (error) { saved = {}; }
@@ -68,7 +78,7 @@ function settingsMessage(raw) {
     SETTING_DATE: asInt(saved.SETTING_DATE, 0, 3, 0),
     SETTING_MODE: asInt(saved.SETTING_MODE, 0, 2, 2),
     SETTING_BATTERY: asToggle(saved.SETTING_BATTERY, 1),
-    SETTING_MOTION: asToggle(saved.SETTING_MOTION, 1)
+    SETTING_MOTION: asMotion(saved.SETTING_MOTION)
   };
 }
 

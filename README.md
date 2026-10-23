@@ -1,6 +1,6 @@
 # Clockfish
 
-A Pebble Time 2 and Pebble Round 2 watchface. Live time digits sit inside an illustrated pixel-art fish. It swims briefly after a tap or minute change, then rests in the center. Aquarium scenes include a castle tank, a leafy kelp forest, midnight reef, and grayscale. Small fish, a jellyfish, a crab, and bubbles appear around the tank. A separate small fish displays battery percentage.
+A Pebble Time 2 and Pebble Round 2 watchface. Live rounded time digits sit inside an illustrated pixel-art fish. The fish alternates between facing left and right during brief glides; the digits stay upright. Aquarium scenes include a castle tank, a leafy kelp forest, midnight reef, and grayscale. Small fish, a jellyfish, a crab, and bubbles move in short ambient bursts. A separate stationary fish displays battery percentage.
 
 ## Build
 
@@ -10,7 +10,7 @@ npm install
 pebble build
 ```
 
-The PBW is `watchface/build/watchface.pbw`; the latest local preview is `release/Clockfish-0.6.0.pbw`. Its bundle contains emery and gabbro builds. Use `pebble install --emulator emery` or `pebble install --emulator gabbro` to inspect a native screen. `directives/build_watchface.md` has the complete verification path.
+The PBW is `watchface/build/watchface.pbw`; the latest local preview is `release/Clockfish-0.7.0.pbw`. Its bundle contains emery and gabbro builds. Use `pebble install --emulator emery` or `pebble install --emulator gabbro` to inspect a native screen. `directives/build_watchface.md` has the complete verification path.
 
 ## Settings
 
@@ -20,6 +20,6 @@ The PBW is `watchface/build/watchface.pbw`; the latest local preview is `release
 - Day/night: day, night, automatic at 19:00–07:00 local watch time
 - Date: Off, YYYY-MM-DD, MM/DD/YYYY, DD/MM/YYYY
 - Battery fish: on/off, with percentage and charge color
-- Motion: short swims on tap and minute change, or still
+- Motion: Still, Gentle, or Lively. Gentle and Lively animate aquarium life in short bursts; Lively does so more often. Both modes allow tap glides and occasional automatic clock-fish glides.
 
-Version 0.6.0 lets the fish and background be selected independently. Match aquarium keeps existing saved scenes looking the same after an upgrade. Random daily chooses each independently from the local calendar date and holds the choice until the next day. Live sea-life details remain visible in every aquarium. The numeral font remains live and fits within the broad fish body. Actual emulator screenshots are in `media/native/`; the original concept renders in `assets/reference/` are design references. Source art lives in `assets/source/`, and `python3 execution/generate_fish_assets.py` plus `python3 execution/generate_background_assets.py` prepare the 28 bundled Pebble images. Store publication and physical-device performance checks remain separate steps.
+Version 0.7.0 keeps the independent fish/background choices and daily random selection from 0.6.0. It adds short ambient motion, alternating left/right clock-fish sprites, and a rounder live time face. The blue fish has a brighter body against dark kelp water. Existing Motion Off settings become Still; Motion On becomes Gentle. Actual emulator screenshots are in `media/native/`; the original concept renders in `assets/reference/` are design references. Source art lives in `assets/source/`, and `python3 execution/generate_fish_assets.py` plus `python3 execution/generate_background_assets.py` prepare the bundled Pebble images. Store publication and physical-device performance checks remain separate steps.

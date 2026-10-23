@@ -23,3 +23,7 @@ The original four-panel concept and motion storyboard were recovered from this c
 ## 2026-10-22: Independent color and scenery controls
 
 Keep the old scene setting as the base preset. New fish and background controls default to Match aquarium, preserving existing appearances after an upgrade. Six fish colors and four aquarium backgrounds can be mixed. Separate salted hashes choose fish and background for each local calendar day when Random daily is selected; this gives variety without a distracting change on every minute tick. Draw small native sea creatures and bubbles over every background, including grayscale, so these elements remain visible regardless of the art plate.
+
+## 2026-10-22: Living aquarium motion and readable fish directions
+
+Use Still, Gentle, and Lively rather than an on/off motion toggle. Gentle and Lively make short ambient bursts with bubbles, small fish, jellyfish, and occasional crab movement; Lively starts bursts more often. An occasional glide or tap alternates the clock fish between mirrored left and right sprites. Keep the live time text upright, and keep the battery fish anchored, because both readings matter more than rotating the artwork through every angle. Use the rounder Bitham face at 30px on Emery and 34px on Gabbro to give the time more interior space. The blue source fish uses a brighter cobalt body so its silhouette separates from dark kelp water.

@@ -1,5 +1,12 @@
 # Errors
 
+## 2026-10-22: Blue fish disappeared into kelp water
+
+- **Error:** The blue fish body and dark kelp water had the same native Pebble RGB value.
+- **Cause:** Quantizing the original blue cutout mapped both surfaces to (0,0,85).
+- **Fix:** Use a brighter cobalt source for blue and violet fish sprites, then verify the body pixel and native emulator contrast.
+- **Graduated to:** `execution/generate_fish_assets.py` and `tests/test_art_assets.py`.
+
 ## 2026-10-22: Date contrast on emulator
 
 - **Error:** The Time 2 date was unreadable over some seabed colors.

@@ -29,6 +29,9 @@ assert.deepEqual(settingsMessage('{bad json'), {
 assert.equal(settingsMessage('{"SETTING_SCENE":99}').SETTING_SCENE, 0);
 assert.equal(settingsMessage('{"SETTING_FISH_COLOR":99,"SETTING_BACKGROUND":-1}').SETTING_FISH_COLOR, 0);
 assert.equal(settingsMessage('{"SETTING_FISH_COLOR":99,"SETTING_BACKGROUND":-1}').SETTING_BACKGROUND, 0);
+assert.equal(settingsMessage('{"SETTING_MOTION":"false"}').SETTING_MOTION, 0);
+assert.equal(settingsMessage('{"SETTING_MOTION":"true"}').SETTING_MOTION, 1);
+assert.equal(settingsMessage('{"SETTING_MOTION":"2"}').SETTING_MOTION, 2);
 
 const fishChoices = configuration().find(item => item.messageKey === 'SETTING_FISH_COLOR');
 const backgroundChoices = configuration().find(item => item.messageKey === 'SETTING_BACKGROUND');
@@ -40,4 +43,6 @@ assert.deepEqual(backgroundChoices.options.map(item => item.label),
 const date = configuration().find(item => item.messageKey === 'SETTING_DATE');
 assert.deepEqual(date.options.map(item => item.label),
   ['Off', 'YYYY-MM-DD', 'MM/DD/YYYY', 'DD/MM/YYYY']);
+const motion = configuration().find(item => item.messageKey === 'SETTING_MOTION');
+assert.deepEqual(motion.options.map(item => item.label), ['Still', 'Gentle', 'Lively']);
 console.log('Clockfish settings passed');

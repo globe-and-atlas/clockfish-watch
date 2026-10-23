@@ -1,6 +1,6 @@
 {
   "name": "clockfish-watch",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "private": true,
   "author": "Daniel Bally",
   "keywords": [
@@ -171,6 +171,66 @@
           "type": "png",
           "name": "BACKGROUND_GABBRO_GRAYSCALE_NIGHT",
           "file": "images/background-gabbro-grayscale-night.png"
+        },
+        {
+          "type": "png",
+          "name": "FISH_EMERY_CASTLE_LEFT",
+          "file": "images/fish-emery-castle-left.png"
+        },
+        {
+          "type": "png",
+          "name": "FISH_EMERY_KELP_LEFT",
+          "file": "images/fish-emery-kelp-left.png"
+        },
+        {
+          "type": "png",
+          "name": "FISH_EMERY_REEF_LEFT",
+          "file": "images/fish-emery-reef-left.png"
+        },
+        {
+          "type": "png",
+          "name": "FISH_EMERY_GRAYSCALE_LEFT",
+          "file": "images/fish-emery-grayscale-left.png"
+        },
+        {
+          "type": "png",
+          "name": "FISH_EMERY_VIOLET_LEFT",
+          "file": "images/fish-emery-violet-left.png"
+        },
+        {
+          "type": "png",
+          "name": "FISH_EMERY_SEA_GREEN_LEFT",
+          "file": "images/fish-emery-sea-green-left.png"
+        },
+        {
+          "type": "png",
+          "name": "FISH_GABBRO_CASTLE_LEFT",
+          "file": "images/fish-gabbro-castle-left.png"
+        },
+        {
+          "type": "png",
+          "name": "FISH_GABBRO_KELP_LEFT",
+          "file": "images/fish-gabbro-kelp-left.png"
+        },
+        {
+          "type": "png",
+          "name": "FISH_GABBRO_REEF_LEFT",
+          "file": "images/fish-gabbro-reef-left.png"
+        },
+        {
+          "type": "png",
+          "name": "FISH_GABBRO_GRAYSCALE_LEFT",
+          "file": "images/fish-gabbro-grayscale-left.png"
+        },
+        {
+          "type": "png",
+          "name": "FISH_GABBRO_VIOLET_LEFT",
+          "file": "images/fish-gabbro-violet-left.png"
+        },
+        {
+          "type": "png",
+          "name": "FISH_GABBRO_SEA_GREEN_LEFT",
+          "file": "images/fish-gabbro-sea-green-left.png"
         }
       ]
     }
