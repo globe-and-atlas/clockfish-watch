@@ -55,3 +55,10 @@
 - **Cause:** The detailed 260x260 castle plate needed more decode memory alongside the fish sprite than Gabbro could provide. The original generated PNG was about 16 KB.
 - **Fix:** Generate the Gabbro castle plate with 2x native pixel clusters. Its day PNG is about 8.3 KB and the fresh native capture now shows the illustrated castle. Keep the generator's size regression test and inspect cold-launch captures.
 - **Graduated to:** `execution/generate_background_assets.py`, `tests/test_art_assets.py`, and `knowledge/procedural/native_capture.md`.
+
+## 2026-10-23: Font capture used a stale clock value
+
+- **Error:** A few 0.8.0 font screenshots showed the emulator's current time while neighboring frames showed the requested 23:58; the first GIF assembly would jump during a font change.
+- **Cause:** The time-setting command returned before the watch face had rendered the new minute.
+- **Fix:** Wait after setting emulator time, inspect the six-frame sheets, and recapture any mismatched frame before assembling and uploading a GIF. Emery Compact bold and Gabbro Digital fine were recaptured at 23:58; both final public GIF assets were checked after upload.
+- **Graduated to:** `execution/capture_fonts.py` and `knowledge/procedural/native_capture.md`.
