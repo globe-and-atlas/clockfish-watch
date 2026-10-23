@@ -4,10 +4,10 @@
 **Agent:** OpenAI Codex
 **Handoff-from:** OpenAI Codex
 **Handoff-type:** continuation
-**Status:** 0.8.0 is published and publicly listed for both watches. The new GIF leads the Round 2 public gallery and both saved editors. The Time 2 public gallery still serves the previous GIF while RePebble cache propagation is pending. Physical-watch validation has not been performed.
+**Status:** 0.8.0 is published and publicly listed for both watches. The updated GIF leads both public galleries and each retains four scene stills. Physical-watch validation has not been performed.
 
 ## Checkpoints
-- 2026-10-23: Built 0.8.0 with six time fonts and saved settings, assembled new native GIFs, and published the dual-target PBW. Node, Python, and host C tests pass. Twelve native font captures were inspected at 200x228 and 260x260, including wide 23:58 examples; a fresh verifier passed the local feature. Emulator restart retained Tall light. Both listing editors show the updated GIF first and four stills; fresh public Round 2 shows the updated GIF first. Fresh public Time 2 still returns the previous GIF asset, although version/description/PBW are current.
+- 2026-10-23: Built 0.8.0 with six time fonts and saved settings, assembled new native GIFs, and published the dual-target PBW. Node, Python, and host C tests pass. Twelve native font captures were inspected at 200x228 and 260x260, including wide 23:58 examples; a fresh verifier passed the local feature. Emulator restart retained Tall light. Both listing editors show the updated GIF first and four stills; fresh public Round 2 shows the updated GIF first. After cache propagation, fresh public Time 2 also showed the updated GIF first, four scene stills, 0.8.0 description, and the 0.8.0 PBW.
 - 2026-10-23: Started a six-font settings and native-fit pass. The existing rounded time style remains the default for upgraded installs. RePebble saved galleries put the 0.7.1 GIF first; fresh public Time 2 confirms the order. Round 2 public view still showed stale media during the initial check.
 - 2026-10-22: Completed and published 0.7.1. C motion/selection, JS settings, five art tests, strict health, dual-target build, PBW metadata, and native Emery/Gabbro glide inspection pass. A fresh read-only verifier found no release blocker. RePebble dashboard and public Time 2/Round 2 listing show 0.7.1; both public galleries contain five refreshed previews. The fish moves in its facing direction, turns at the outer excursion, and returns with smaller displacement while live time remains body-centered and battery/date stay still. This is emulator and store evidence, not a physical-wrist comfort or power result.
 - 2026-10-22: Modeled three-second glances with uniformly random phase. Current Gentle/Lively ambient overlap estimates are 25%/39%, with automatic turns about every 3.0/1.2 minutes. Proposed timing reduces overlap to 18%/29% and turns to about 9.8/5.1 minutes; the model does not measure human attention or hardware power. Next: implement smaller movement, turn at glide apex, and native-check both targets.
@@ -35,8 +35,8 @@
 - 2026-10-22 17:20: Added a bounded vertical arc to the swim. Final emery tap capture shifted the fish left and up; the settled frame returned to center. Rebuilt and recaptured all nine native scene/night screenshots. Clean health check and settings tests passed.
 
 ## Handoff
-- **Completed:** Dual-target 0.8.0 published on RePebble with six selectable time fonts. Local native fit, tests, independent verification, and emulator restart persistence check passed. Round 2 public gallery leads with the new GIF.
-- **Next:** Confirm propagation of the new Time 2 GIF on the public gallery; check sustained motion and power on physical Pebble Time 2 and Round 2.
+- **Completed:** Dual-target 0.8.0 published on RePebble with six selectable time fonts. Local native fit, tests, independent verification, and emulator restart persistence check passed. Both public galleries lead with the new GIF.
+- **Next:** Check sustained motion and power on physical Pebble Time 2 and Round 2.
 - **Limit:** Emulator and public-listing results do not establish physical-device battery life, motion quality, or saved-setting migration on an existing install.
 
 ## Checkpoint Log

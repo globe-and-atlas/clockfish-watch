@@ -2,9 +2,9 @@
 
 ## RePebble gallery order — 2026-10-23
 
-- [ ] The Time 2 public gallery shows the 0.8.0 animated GIF first.
+- [x] The Time 2 public gallery shows the 0.8.0 animated GIF first.
 - [x] The Round 2 public gallery shows the 0.8.0 animated GIF first.
-- [ ] Both public galleries retain the castle, kelp, reef, and grayscale screenshots.
+- [x] Both public galleries retain the castle, kelp, reef, and grayscale screenshots.
 
 ## Six time fonts — 2026-10-23
 
@@ -18,7 +18,7 @@
 - [x] A fresh verifier inspects the final font captures.
 - [x] RePebble lists the font-enabled release for Time 2.
 - [x] RePebble lists the font-enabled release for Round 2.
-- [ ] The Time 2 public gallery leads with the updated animated GIF.
+- [x] The Time 2 public gallery leads with the updated animated GIF.
 - [x] The Round 2 public gallery leads with the updated animated GIF.
 
 ## Calm wrist motion revision — 2026-10-22
