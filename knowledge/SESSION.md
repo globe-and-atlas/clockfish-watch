@@ -1,12 +1,14 @@
 # Current session
 
-**Goal:** Round Clockfish's fish silhouette and fit the time within its body on Pebble Time 2 and Round 2.
+**Goal:** Match Clockfish's original pixel-art aquarium concepts and fit live time inside the fish on Pebble Time 2 and Round 2.
 **Agent:** OpenAI Codex
 **Handoff-from:** OpenAI Codex
 **Handoff-type:** continuation
-**Status:** 0.4.0 proportion study complete; fish sprite pass in progress. Native captures show better time fit, but polygon fins and tail still differ from the original pixel-art concept.
+**Status:** 0.5.0 illustrated local preview complete. Native captures show the broader fish, live numerals inside its body, and four layered aquarium scenes on each target. Independent review confirmed the corrected Round 2 castle day/night captures.
 
 ## Checkpoints
+- 2026-10-22: Independent review caught Gabbro castle day reverting to vector art. Reproduced `PNG memory allocation failed` in emulator logs. Reduced the castle resource with 2x native pixel clustering (day PNG about 8.3 KB), rebuilt 0.5.0, and recaptured all Gabbro scenes plus castle night. Castle day now renders illustrated scenery. Added resource-size regression test; final independent recheck pending.
+- 2026-10-22: Saved the original concept sheet and motion board, generated transparent fish source art and four fish-free aquarium plates, and quantized 24 native assets with deterministic Pillow scripts. Both native target builds pass. Captured four scenes on emery and gabbro plus an emery castle night frame; direct inspection shows the live time within the fish body and the intended pixel-art depth. Settings, asset constraints, health, and diff checks pass. Pending: final PBW package and fresh verifier review.
 - 2026-10-22: Starting a 0.4.0 local visual pass with a taller, rounder fish body, smaller numerals, and softer fin/tail contours. The earlier concept renderings are not stored in this project, so native watch captures will be the concrete comparison surface.
 - 2026-10-22: Located the original four aquarium concept renders and motion storyboard in this chat's generated images. The target is rich pixel art with a thick fish outline, patterned fins, and layered scenery. The 0.4.0 native captures improve clock fit on both targets, but independent review confirmed polygon fins/tail remain visibly angular. Starting an illustrated sprite asset pass from the original motion-board reference.
 - 2026-10-22 19:40: User chose the illustrated aquarium direction. Starting a 0.3.0 art pass to round the fish silhouette and replace sparse kelp reeds with broad layered leaves at native resolution.
@@ -19,9 +21,9 @@
 - 2026-10-22 17:20: Added a bounded vertical arc to the swim. Final emery tap capture shifted the fish left and up; the settled frame returned to center. Rebuilt and recaptured all nine native scene/night screenshots. Clean health check and settings tests passed.
 
 ## Handoff
-- **Completed:** Native dual-target 0.3.0 illustrated preview, phone settings, release PBW, nine fresh native screenshots, and independent visual review.
-- **Next:** Get wearer feedback on this illustrated style; verify revised motion and appearance on physical Pebble Time 2 and Round 2; prepare store media and publish only upon a separate release decision.
-- **Limit:** Emulator results do not establish physical-device battery life or store publication.
+- **Completed:** Dual-target 0.5.0 pixel-art preview, original concept references, deterministic native assets, local PBW, ten fresh native screenshots, passing settings and asset tests, and independent visual review.
+- **Next:** Get wearer feedback on this illustrated style; verify revised motion and appearance on physical Pebble Time 2 and Round 2; prepare store media if publication is requested.
+- **Limit:** Emulator results do not establish physical-device battery life, motion quality, or store publication.
 
 ## Checkpoint Log
 
@@ -29,3 +31,4 @@
 - 2026-10-22 19:37 — commit: Rebuild Clockfish aquarium visual preview | README.md,execution/capture_native.py,knowledge/DECISIONS.md,knowledge/ERRORS.md,knowledge/INDEX.md
 - 2026-10-22 19:50 — commit: Illustrate Clockfish aquarium scenes | README.md,knowledge/DECISIONS.md,knowledge/REFLECTIONS.jsonl,knowledge/SESSION.md,media/native/emery-castle-night.png
 - 2026-10-22 20:03 — commit: Prototype rounded Clockfish proportions | README.md,knowledge/DECISIONS.md,knowledge/SESSION.md,media/native/emery-castle-night.png,media/native/emery-castle.png
+- 2026-10-22 20:18 — commit: Illustrate Clockfish with native pixel art | README.md,assets/reference/four-concepts.png,assets/reference/motion-storyboard.png,assets/source/background-castle.png,assets/source/background-grayscale.png

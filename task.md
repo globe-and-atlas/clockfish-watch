@@ -1,5 +1,26 @@
 # Clockfish watchface
 
+## Pixel illustration sprite pass — 2026-10-22
+
+- [x] The original aquarium concept images are saved in the project as references.
+- [x] A transparent fish sprite is generated from the motion storyboard style.
+- [x] The sprite body has an empty region for live time digits.
+- [x] An emery sprite renders without clipping at 200x228.
+- [x] A gabbro sprite renders without clipping at 260x260.
+- [x] The time is fully inside the sprite body on emery.
+- [x] The time is fully inside the sprite body on gabbro.
+- [x] A grayscale sprite preserves the grayscale scene.
+- [x] Scene changes load the corresponding fish colorway.
+- [x] Four illustrated background scenes render at 200x228.
+- [x] Four illustrated background scenes render at 260x260.
+- [x] A night background renders at 200x228.
+- [x] A night background renders at 260x260.
+- [x] The PBW includes emery and gabbro builds.
+- [x] Both targets have fresh native captures for four scenes.
+- [x] A fresh verifier compares the final fish to the concept reference.
+
+Use the original concept storyboard as the visual reference. The fish sprite provides richer pixel art while the digits remain live text. This is a local preview; physical motion and store publication are separate.
+
 ## Curved fish and time fit — 2026-10-22
 
 - [x] The fish body has a smoothly rounded silhouette at 200x228.

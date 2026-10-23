@@ -1,6 +1,6 @@
 {
   "name": "clockfish-watch",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "private": true,
   "author": "Daniel Bally",
   "keywords": [
@@ -29,7 +29,128 @@
       "SETTING_BATTERY"
     ],
     "resources": {
-      "media": []
+      "media": [
+        {
+          "type": "png",
+          "name": "FISH_EMERY_CASTLE",
+          "file": "images/fish-emery-castle.png"
+        },
+        {
+          "type": "png",
+          "name": "FISH_EMERY_KELP",
+          "file": "images/fish-emery-kelp.png"
+        },
+        {
+          "type": "png",
+          "name": "FISH_EMERY_REEF",
+          "file": "images/fish-emery-reef.png"
+        },
+        {
+          "type": "png",
+          "name": "FISH_EMERY_GRAYSCALE",
+          "file": "images/fish-emery-grayscale.png"
+        },
+        {
+          "type": "png",
+          "name": "FISH_GABBRO_CASTLE",
+          "file": "images/fish-gabbro-castle.png"
+        },
+        {
+          "type": "png",
+          "name": "FISH_GABBRO_KELP",
+          "file": "images/fish-gabbro-kelp.png"
+        },
+        {
+          "type": "png",
+          "name": "FISH_GABBRO_REEF",
+          "file": "images/fish-gabbro-reef.png"
+        },
+        {
+          "type": "png",
+          "name": "FISH_GABBRO_GRAYSCALE",
+          "file": "images/fish-gabbro-grayscale.png"
+        },
+        {
+          "type": "png",
+          "name": "BACKGROUND_EMERY_CASTLE_DAY",
+          "file": "images/background-emery-castle-day.png"
+        },
+        {
+          "type": "png",
+          "name": "BACKGROUND_EMERY_CASTLE_NIGHT",
+          "file": "images/background-emery-castle-night.png"
+        },
+        {
+          "type": "png",
+          "name": "BACKGROUND_EMERY_KELP_DAY",
+          "file": "images/background-emery-kelp-day.png"
+        },
+        {
+          "type": "png",
+          "name": "BACKGROUND_EMERY_KELP_NIGHT",
+          "file": "images/background-emery-kelp-night.png"
+        },
+        {
+          "type": "png",
+          "name": "BACKGROUND_EMERY_REEF_DAY",
+          "file": "images/background-emery-reef-day.png"
+        },
+        {
+          "type": "png",
+          "name": "BACKGROUND_EMERY_REEF_NIGHT",
+          "file": "images/background-emery-reef-night.png"
+        },
+        {
+          "type": "png",
+          "name": "BACKGROUND_EMERY_GRAYSCALE_DAY",
+          "file": "images/background-emery-grayscale-day.png"
+        },
+        {
+          "type": "png",
+          "name": "BACKGROUND_EMERY_GRAYSCALE_NIGHT",
+          "file": "images/background-emery-grayscale-night.png"
+        },
+        {
+          "type": "png",
+          "name": "BACKGROUND_GABBRO_CASTLE_DAY",
+          "file": "images/background-gabbro-castle-day.png"
+        },
+        {
+          "type": "png",
+          "name": "BACKGROUND_GABBRO_CASTLE_NIGHT",
+          "file": "images/background-gabbro-castle-night.png"
+        },
+        {
+          "type": "png",
+          "name": "BACKGROUND_GABBRO_KELP_DAY",
+          "file": "images/background-gabbro-kelp-day.png"
+        },
+        {
+          "type": "png",
+          "name": "BACKGROUND_GABBRO_KELP_NIGHT",
+          "file": "images/background-gabbro-kelp-night.png"
+        },
+        {
+          "type": "png",
+          "name": "BACKGROUND_GABBRO_REEF_DAY",
+          "file": "images/background-gabbro-reef-day.png"
+        },
+        {
+          "type": "png",
+          "name": "BACKGROUND_GABBRO_REEF_NIGHT",
+          "file": "images/background-gabbro-reef-night.png"
+        },
+        {
+          "type": "png",
+          "name": "BACKGROUND_GABBRO_GRAYSCALE_DAY",
+          "file": "images/background-gabbro-grayscale-day.png"
+        },
+        {
+          "type": "png",
+          "name": "BACKGROUND_GABBRO_GRAYSCALE_NIGHT",
+          "file": "images/background-gabbro-grayscale-night.png"
+        }
+      ]
     }
   },
   "dependencies": {

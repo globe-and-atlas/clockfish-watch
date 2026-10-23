@@ -2,7 +2,7 @@
 
 ## 2026-10-22: Native Pebble face
 
-The template scaffold used `dashboard-static` because the template has no Pebble profile. The project profile is now `pebble-watch`; the deliverable is a native dual-platform PBW. Draw scene elements in C instead of including high-resolution raster concept art, which would not faithfully represent the watch displays. Trigger short animation bursts on tap and minute change, then rest to preserve battery. A separate battery fish includes an explicit percentage so its meaning is clear.
+The template scaffold used `dashboard-static` because the template has no Pebble profile. The project profile is now `pebble-watch`; the deliverable is a native dual-platform PBW. The first versions drew scene elements in C instead of including high-resolution raster concept art, which would not faithfully represent the watch displays. Trigger short animation bursts on tap and minute change, then rest to preserve battery. A separate battery fish includes an explicit percentage so its meaning is clear.
 
 ## 2026-10-22: Local fish visual preview
 
@@ -14,4 +14,8 @@ The wearer chose an illustrated aquarium with a clearly shaped fish. Version 0.3
 
 ## 2026-10-22: Fish proportions before art asset work
 
-The wearer found 0.3.0 too angular and the time crowded. Version 0.4.0 increases body height, uses denser contour points for the body and fins, reduces the time font, and narrows its text box so the face retains open space around the eye. Treat this as a native proportion study. Matching the earlier concept renderings more closely likely requires authored curved artwork at native target sizes; those rendering source files are not in the project yet.
+The wearer found 0.3.0 too angular and the time crowded. Version 0.4.0 increases body height, uses denser contour points for the body and fins, reduces the time font, and narrows its text box so the face retains open space around the eye. Treat this as a native proportion study. Matching the earlier concept renderings more closely requires authored artwork at native target sizes.
+
+## 2026-10-22: Native pixel-art resources for the concept style
+
+The original four-panel concept and motion storyboard were recovered from this conversation and saved in `assets/reference/`. Version 0.5.0 derives a transparent fish cutout and four fish-free aquarium plates from that art direction, then quantizes them to Pebble's four channel levels at each target resolution. This replaces the polygonal fish and sparse procedural scenery in the usual rendering path. Keep time, date, and battery as live native text and shapes so they remain accurate and configurable. Retain vector scenery only as a fallback if a bitmap fails to load.

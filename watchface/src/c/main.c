@@ -9,6 +9,10 @@ typedef struct {
 
 static Window *s_window;
 static Layer *s_face;
+static GBitmap *s_fish_bitmap;
+static GBitmap *s_background_bitmap;
+static int s_background_scene = -1;
+static bool s_background_night;
 static AppTimer *s_swim_timer;
 static int s_scene;
 static int s_date;
@@ -312,7 +316,7 @@ static int fish_bob(void) {
   return s_swim_step < 0 ? 0 : sequence[s_swim_step];
 }
 
-static void draw_clock_fish(GContext *ctx, int w, int h, Palette p, const struct tm *now) {
+static void draw_clock_fish_vector(GContext *ctx, int w, int h, Palette p, const struct tm *now) {
   int body_w = w >= 240 ? 178 : 146;
   int body_h = w >= 240 ? 80 : 72;
   // Center the numeral area; the tail extends farther left than the snout extends right.
@@ -418,6 +422,81 @@ static void draw_clock_fish(GContext *ctx, int w, int h, Palette p, const struct
        x + body_w - 4, middle + 8, 1);
 }
 
+static uint32_t fish_resource_id(int width, int scene) {
+  static const uint32_t emery[] = {
+    RESOURCE_ID_FISH_EMERY_CASTLE, RESOURCE_ID_FISH_EMERY_KELP,
+    RESOURCE_ID_FISH_EMERY_REEF, RESOURCE_ID_FISH_EMERY_GRAYSCALE
+  };
+  static const uint32_t gabbro[] = {
+    RESOURCE_ID_FISH_GABBRO_CASTLE, RESOURCE_ID_FISH_GABBRO_KELP,
+    RESOURCE_ID_FISH_GABBRO_REEF, RESOURCE_ID_FISH_GABBRO_GRAYSCALE
+  };
+  int index = scene >= 0 && scene < 4 ? scene : 0;
+  return width >= 240 ? gabbro[index] : emery[index];
+}
+
+static void reload_fish_bitmap(void) {
+  if (!s_face) return;
+  if (s_fish_bitmap) gbitmap_destroy(s_fish_bitmap);
+  int width = layer_get_bounds(s_face).size.w;
+  s_fish_bitmap = gbitmap_create_with_resource(fish_resource_id(width, s_scene));
+}
+
+static uint32_t background_resource_id(int width, int scene, bool night) {
+  static const uint32_t emery[4][2] = {
+    {RESOURCE_ID_BACKGROUND_EMERY_CASTLE_DAY, RESOURCE_ID_BACKGROUND_EMERY_CASTLE_NIGHT},
+    {RESOURCE_ID_BACKGROUND_EMERY_KELP_DAY, RESOURCE_ID_BACKGROUND_EMERY_KELP_NIGHT},
+    {RESOURCE_ID_BACKGROUND_EMERY_REEF_DAY, RESOURCE_ID_BACKGROUND_EMERY_REEF_NIGHT},
+    {RESOURCE_ID_BACKGROUND_EMERY_GRAYSCALE_DAY, RESOURCE_ID_BACKGROUND_EMERY_GRAYSCALE_NIGHT}
+  };
+  static const uint32_t gabbro[4][2] = {
+    {RESOURCE_ID_BACKGROUND_GABBRO_CASTLE_DAY, RESOURCE_ID_BACKGROUND_GABBRO_CASTLE_NIGHT},
+    {RESOURCE_ID_BACKGROUND_GABBRO_KELP_DAY, RESOURCE_ID_BACKGROUND_GABBRO_KELP_NIGHT},
+    {RESOURCE_ID_BACKGROUND_GABBRO_REEF_DAY, RESOURCE_ID_BACKGROUND_GABBRO_REEF_NIGHT},
+    {RESOURCE_ID_BACKGROUND_GABBRO_GRAYSCALE_DAY, RESOURCE_ID_BACKGROUND_GABBRO_GRAYSCALE_NIGHT}
+  };
+  int index = scene >= 0 && scene < 4 ? scene : 0;
+  return width >= 240 ? gabbro[index][night] : emery[index][night];
+}
+
+static void reload_background_bitmap(bool night) {
+  if (!s_face) return;
+  if (s_background_bitmap && s_background_scene == s_scene &&
+      s_background_night == night) return;
+  if (s_background_bitmap) gbitmap_destroy(s_background_bitmap);
+  int width = layer_get_bounds(s_face).size.w;
+  s_background_bitmap = gbitmap_create_with_resource(
+      background_resource_id(width, s_scene, night));
+  s_background_scene = s_scene;
+  s_background_night = night;
+}
+
+static void draw_clock_fish(GContext *ctx, int w, int h, Palette p, const struct tm *now) {
+  if (!s_fish_bitmap) {
+    draw_clock_fish_vector(ctx, w, h, p, now);
+    return;
+  }
+  int sprite_w = w >= 240 ? 216 : 184;
+  int sprite_h = w >= 240 ? 116 : 100;
+  int x = (w - sprite_w) / 2 + fish_shift(w);
+  int y = h / 2 - sprite_h / 2 - 10 + fish_bob();
+  graphics_context_set_compositing_mode(ctx, GCompOpSet);
+  graphics_draw_bitmap_in_rect(ctx, s_fish_bitmap, GRect(x, y, sprite_w, sprite_h));
+  graphics_context_set_compositing_mode(ctx, GCompOpAssign);
+  char time_text[8];
+  strftime(time_text, sizeof(time_text), clock_is_24h_style() ? "%H:%M" : "%I:%M", now);
+  if (!clock_is_24h_style() && time_text[0] == '0') {
+    for (int i = 0; time_text[i]; i++) time_text[i] = time_text[i + 1];
+  }
+  graphics_context_set_text_color(ctx, s_scene == 3 ? GColorWhite : color(0xFFF1C6));
+  graphics_draw_text(ctx, time_text,
+                     fonts_get_system_font(w >= 240 ? FONT_KEY_LECO_36_BOLD_NUMBERS :
+                                                        FONT_KEY_LECO_32_BOLD_NUMBERS),
+                     GRect(x + (w >= 240 ? 52 : 45), h / 2 - 33 + fish_bob(),
+                           w >= 240 ? 118 : 102, 48),
+                     GTextOverflowModeTrailingEllipsis, GTextAlignmentCenter, NULL);
+}
+
 static void draw_battery_fish(GContext *ctx, int w, int h, Palette p, bool night) {
   if (!s_battery_visible) return;
   int x = w / 2 - 23, y = h - 50;
@@ -451,11 +530,14 @@ static void draw_date(GContext *ctx, int w, int h, Palette p, const struct tm *n
   const char *format = s_date == 1 ? "%Y-%m-%d" :
                        (s_date == 2 ? "%m/%d/%Y" : "%d/%m/%Y");
   strftime(date_text, sizeof(date_text), format, now);
-  GColor ink = w >= 240 ? (s_scene == 3 && !night ? p.fish : p.numeral) :
-               (night || s_scene == 2 || s_scene == 1 ? p.numeral : p.fish);
+  int top = w >= 240 ? 30 : 8;
+  bool pale = s_scene == 3 && !night;
+  graphics_context_set_fill_color(ctx, pale ? GColorWhite : color(0x082747));
+  graphics_fill_rect(ctx, GRect(w / 2 - 52, top + 2, 104, 18), 5, GCornersAll);
+  GColor ink = pale ? GColorBlack : GColorWhite;
   graphics_context_set_text_color(ctx, ink);
   graphics_draw_text(ctx, date_text, fonts_get_system_font(FONT_KEY_GOTHIC_18),
-                     GRect(w / 2 - 60, w >= 240 ? 30 : 8, 120, 23), GTextOverflowModeTrailingEllipsis,
+                     GRect(w / 2 - 60, top, 120, 23), GTextOverflowModeTrailingEllipsis,
                      GTextAlignmentCenter, NULL);
 }
 
@@ -466,20 +548,26 @@ static void face_update(Layer *layer, GContext *ctx) {
   struct tm *now = localtime(&epoch);
   bool night = s_mode == 1 || (s_mode == 2 && (now->tm_hour >= 19 || now->tm_hour < 7));
   Palette p = palette(night);
-  graphics_context_set_fill_color(ctx, p.water);
-  graphics_fill_rect(ctx, bounds, 0, GCornerNone);
-  draw_light_rays(ctx, w, h, night);
-  graphics_context_set_fill_color(ctx, p.deep);
-  graphics_fill_rect(ctx, GRect(0, h / 2 + 22, w, h / 2), 0, GCornerNone);
-  graphics_context_set_fill_color(ctx, p.sand);
-  graphics_fill_rect(ctx, GRect(0, h - (w >= 240 ? 50 : 27), w, 50), 0, GCornerNone);
-  draw_plants(ctx, w, h, p);
-  draw_scene_details(ctx, w, h, p);
-  draw_bubbles(ctx, w, h, p);
-  int school_shift = s_swim_step < 0 ? 0 : (s_swim_step - 5) / 2;
-  draw_small_fish(ctx, w / 4 + school_shift, h / 4, 5, p.fin, p.numeral);
-  draw_small_fish(ctx, w / 4 - 17 + school_shift, h / 4 + 11, 3, p.detail, p.fish);
-  draw_small_fish(ctx, w * 3 / 4 - school_shift, h / 3, 4, p.detail, p.fish);
+  reload_background_bitmap(night);
+  if (s_background_bitmap) {
+    graphics_context_set_compositing_mode(ctx, GCompOpAssign);
+    graphics_draw_bitmap_in_rect(ctx, s_background_bitmap, bounds);
+  } else {
+    graphics_context_set_fill_color(ctx, p.water);
+    graphics_fill_rect(ctx, bounds, 0, GCornerNone);
+    draw_light_rays(ctx, w, h, night);
+    graphics_context_set_fill_color(ctx, p.deep);
+    graphics_fill_rect(ctx, GRect(0, h / 2 + 22, w, h / 2), 0, GCornerNone);
+    graphics_context_set_fill_color(ctx, p.sand);
+    graphics_fill_rect(ctx, GRect(0, h - (w >= 240 ? 50 : 27), w, 50), 0, GCornerNone);
+    draw_plants(ctx, w, h, p);
+    draw_scene_details(ctx, w, h, p);
+    draw_bubbles(ctx, w, h, p);
+    int school_shift = s_swim_step < 0 ? 0 : (s_swim_step - 5) / 2;
+    draw_small_fish(ctx, w / 4 + school_shift, h / 4, 5, p.fin, p.numeral);
+    draw_small_fish(ctx, w / 4 - 17 + school_shift, h / 4 + 11, 3, p.detail, p.fish);
+    draw_small_fish(ctx, w * 3 / 4 - school_shift, h / 3, 4, p.detail, p.fish);
+  }
   draw_clock_fish(ctx, w, h, p, now);
   draw_battery_fish(ctx, w, h, p, night);
   draw_date(ctx, w, h, p, now, night);
@@ -513,7 +601,13 @@ static void inbox(DictionaryIterator *iterator, void *context) {
   Tuple *tuple;
   if ((tuple = dict_find(iterator, MESSAGE_KEY_SETTING_SCENE))) {
     int value = tuple->value->int32;
-    if (value >= 0 && value <= 3) { s_scene = value; persist_write_int(PERSIST_SCENE, value); }
+    if (value >= 0 && value <= 3) {
+      if (s_scene != value) {
+        s_scene = value;
+        reload_fish_bitmap();
+      }
+      persist_write_int(PERSIST_SCENE, value);
+    }
   }
   if ((tuple = dict_find(iterator, MESSAGE_KEY_SETTING_DATE))) {
     int value = tuple->value->int32;
@@ -545,6 +639,7 @@ static void init(void) {
   s_face = layer_create(layer_get_bounds(window_get_root_layer(s_window)));
   layer_set_update_proc(s_face, face_update);
   layer_add_child(window_get_root_layer(s_window), s_face);
+  reload_fish_bitmap();
   window_stack_push(s_window, true);
   tick_timer_service_subscribe(MINUTE_UNIT, tick_handler);
   accel_tap_service_subscribe(tap_handler);
@@ -560,6 +655,8 @@ static void deinit(void) {
   battery_state_service_unsubscribe();
   tick_timer_service_unsubscribe();
   app_message_deregister_callbacks();
+  if (s_fish_bitmap) gbitmap_destroy(s_fish_bitmap);
+  if (s_background_bitmap) gbitmap_destroy(s_background_bitmap);
   layer_destroy(s_face);
   window_destroy(s_window);
 }

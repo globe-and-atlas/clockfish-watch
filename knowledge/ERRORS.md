@@ -41,3 +41,10 @@
 - **Cause:** Emulator screenshots can arrive during the framebuffer redraw; a single mid-animation frame cannot establish the complete composition.
 - **Fix:** Inspect several frames and a settled frame. Treat incomplete transient captures as capture artifacts until reproduced visually on a physical watch.
 - **Graduated to:** `knowledge/procedural/native_capture.md`.
+
+## 2026-10-22: Round 2 castle PNG exceeded decode heap
+
+- **Error:** Gabbro castle day fell back to the old vector background while the other illustrated scenes loaded; emulator logs repeated `PNG memory allocation failed`.
+- **Cause:** The detailed 260x260 castle plate needed more decode memory alongside the fish sprite than Gabbro could provide. The original generated PNG was about 16 KB.
+- **Fix:** Generate the Gabbro castle plate with 2x native pixel clusters. Its day PNG is about 8.3 KB and the fresh native capture now shows the illustrated castle. Keep the generator's size regression test and inspect cold-launch captures.
+- **Graduated to:** `execution/generate_background_assets.py`, `tests/test_art_assets.py`, and `knowledge/procedural/native_capture.md`.
