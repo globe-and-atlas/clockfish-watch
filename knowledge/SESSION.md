@@ -1,12 +1,14 @@
 # Current session
 
-**Goal:** Give Clockfish an illustrated aquarium treatment with a clearly shaped fish for Pebble Time 2 and Round 2.
+**Goal:** Round Clockfish's fish silhouette and fit the time within its body on Pebble Time 2 and Round 2.
 **Agent:** OpenAI Codex
 **Handoff-from:** OpenAI Codex
 **Handoff-type:** continuation
-**Status:** Illustrated aquarium 0.3.0 local preview complete. Native emery and gabbro captures pass visual review. Revised swim and physical watch appearance remain unverified; store publication is pending a separate decision.
+**Status:** 0.4.0 proportion study complete; fish sprite pass in progress. Native captures show better time fit, but polygon fins and tail still differ from the original pixel-art concept.
 
 ## Checkpoints
+- 2026-10-22: Starting a 0.4.0 local visual pass with a taller, rounder fish body, smaller numerals, and softer fin/tail contours. The earlier concept renderings are not stored in this project, so native watch captures will be the concrete comparison surface.
+- 2026-10-22: Located the original four aquarium concept renders and motion storyboard in this chat's generated images. The target is rich pixel art with a thick fish outline, patterned fins, and layered scenery. The 0.4.0 native captures improve clock fit on both targets, but independent review confirmed polygon fins/tail remain visibly angular. Starting an illustrated sprite asset pass from the original motion-board reference.
 - 2026-10-22 19:40: User chose the illustrated aquarium direction. Starting a 0.3.0 art pass to round the fish silhouette and replace sparse kelp reeds with broad layered leaves at native resolution.
 - 2026-10-22 19:50: Rounded the fish body, added fin and eye detail, introduced a warm castle fish, broadened the kelp blades, and expanded reef and grayscale seabeds. Rebuilt and inspected nine fresh native screenshots across both targets. The 0.3.0 PBW matches the final dual-target build; settings, JS syntax, strict health, and diff checks pass. Independent review found no native still-image regression and noted that motion and physical appearance remain unchecked.
 - 2026-10-22 18:55: Began visual rebuild after user feedback. Current native screenshots show a rounded clock capsule, sparse plants, and simple castle/coral. Goal is a recognizable fish silhouette and richer, still legible native scenes; Way Back 0.7.2 is already the public release.
@@ -26,3 +28,4 @@
 - 2026-10-22 17:21 — commit: Build Clockfish Pebble watchface for Time 2 and Round 2 | .gitignore,AGENTS.md,DEPLOY.md,README.md,config.example.js
 - 2026-10-22 19:37 — commit: Rebuild Clockfish aquarium visual preview | README.md,execution/capture_native.py,knowledge/DECISIONS.md,knowledge/ERRORS.md,knowledge/INDEX.md
 - 2026-10-22 19:50 — commit: Illustrate Clockfish aquarium scenes | README.md,knowledge/DECISIONS.md,knowledge/REFLECTIONS.jsonl,knowledge/SESSION.md,media/native/emery-castle-night.png
+- 2026-10-22 20:03 — commit: Prototype rounded Clockfish proportions | README.md,knowledge/DECISIONS.md,knowledge/SESSION.md,media/native/emery-castle-night.png,media/native/emery-castle.png

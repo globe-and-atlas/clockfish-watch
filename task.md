@@ -1,5 +1,24 @@
 # Clockfish watchface
 
+## Curved fish and time fit — 2026-10-22
+
+- [x] The fish body has a smoothly rounded silhouette at 200x228.
+- [x] The fish body has a smoothly rounded silhouette at 260x260.
+- [x] The clock digits stay inside the body boundary at 200x228.
+- [x] The clock digits stay inside the body boundary at 260x260.
+- [x] The eye has visible space beyond the final time digit on emery.
+- [x] The eye has visible space beyond the final time digit on gabbro.
+- [ ] The tail and fins use curved contours on both targets.
+- [x] The date remains readable in the four scene captures on emery.
+- [x] The date remains readable in the four scene captures on gabbro.
+- [x] A fresh 0.4.0 PBW includes emery.
+- [x] A fresh 0.4.0 PBW includes gabbro.
+- [x] A fresh verifier inspects the final native captures.
+
+This pass addresses the wearer's direct visual critique: the numerals must read as part of the fish's body, and the fish must feel less angular. The target is a local visual preview; physical motion and store publication remain separate checks.
+
+The proportion and spacing checks pass. The fin/tail contour criterion remains open: native GPath polygons still show straight facets. The original concept render has now been located in this chat and will guide a bitmap sprite pass.
+
 ## Illustrated aquarium pass — 2026-10-22
 
 - [x] The main fish has a rounded body silhouette at 200x228.

@@ -303,8 +303,8 @@ static int fish_shift(int w) {
   static const int sequence[] = {0, -5, -10, -15, -10, 0, 10, 15, 10, 5, 0};
   if (s_swim_step < 0) return 0;
   int value = sequence[s_swim_step];
-  if (w >= 240) return value * 4 / 5;
-  return value > 14 ? 14 : (value < -14 ? -14 : value);
+  // Keep the fuller tail on-screen throughout the swim.
+  return w >= 240 ? value * 2 / 3 : value / 2;
 }
 
 static int fish_bob(void) {
@@ -314,60 +314,84 @@ static int fish_bob(void) {
 
 static void draw_clock_fish(GContext *ctx, int w, int h, Palette p, const struct tm *now) {
   int body_w = w >= 240 ? 178 : 146;
-  int body_h = w >= 240 ? 66 : 58;
+  int body_h = w >= 240 ? 80 : 72;
   // Center the numeral area; the tail extends farther left than the snout extends right.
   int x = (w - body_w) / 2 + 11 + fish_shift(w);
   int y = h / 2 - body_h / 2 - 10 + fish_bob();
   int middle = y + body_h / 2;
-  int tail = w >= 240 ? 23 : 18;
-  int flap = s_swim_step >= 0 && s_swim_step % 2 ? 5 : 0;
+  int tail = w >= 240 ? 30 : 25;
+  int flap = s_swim_step >= 0 && s_swim_step % 2 ? 3 : 0;
   GColor edge = s_scene == 3 ? p.detail : p.deep;
   GPoint tail_points[] = {
-    GPoint(x + 13, middle - 8), GPoint(x - tail - flap, y + 2),
-    GPoint(x - tail + 9, middle), GPoint(x - tail - flap, y + body_h - 2),
-    GPoint(x + 13, middle + 8)
+    GPoint(x + 13, middle - 10), GPoint(x + 2, middle - 14),
+    GPoint(x - tail + 7, y + 8), GPoint(x - tail - flap, y + 5),
+    GPoint(x - tail + 1, y + 16), GPoint(x - tail + 8, middle - 8),
+    GPoint(x - tail + 12, middle), GPoint(x - tail + 8, middle + 8),
+    GPoint(x - tail + 1, y + body_h - 16),
+    GPoint(x - tail - flap, y + body_h - 5),
+    GPoint(x - tail + 7, y + body_h - 8),
+    GPoint(x + 2, middle + 14), GPoint(x + 13, middle + 10)
   };
-  fill_polygon(ctx, tail_points, 5, p.fin, edge);
-  line(ctx, edge, x + 8, middle, x - tail + 9, middle, 1);
+  fill_polygon(ctx, tail_points, 13, p.fin, edge);
+  line(ctx, edge, x + 6, middle, x - tail + 12, middle, 1);
+  line(ctx, edge, x - tail + 13, middle - 4, x - tail + 2, y + 9, 1);
+  line(ctx, edge, x - tail + 13, middle + 4,
+       x - tail + 2, y + body_h - 9, 1);
   GPoint dorsal[] = {
-    GPoint(x + 36, y + 11), GPoint(x + 49, y - 4),
-    GPoint(x + 64, y - 10), GPoint(x + 82, y - 10),
+    GPoint(x + 35, y + 11), GPoint(x + 47, y + 2),
+    GPoint(x + 60, y - 6), GPoint(x + 70, y - 10),
+    GPoint(x + 82, y - 10), GPoint(x + 93, y - 7),
     GPoint(x + 105, y + 7)
   };
-  fill_polygon(ctx, dorsal, 5, p.fin, edge);
-  line(ctx, edge, x + 56, y + 4, x + 65, y - 7, 1);
-  line(ctx, edge, x + 70, y + 3, x + 81, y - 7, 1);
+  fill_polygon(ctx, dorsal, 7, p.fin, edge);
+  line(ctx, edge, x + 58, y + 5, x + 70, y - 7, 1);
+  line(ctx, edge, x + 75, y + 3, x + 84, y - 7, 1);
   GPoint ventral[] = {
-    GPoint(x + 49, y + body_h - 10), GPoint(x + 63, y + body_h + 9),
-    GPoint(x + 76, y + body_h + 12), GPoint(x + 97, y + body_h - 8)
+    GPoint(x + 45, y + body_h - 10),
+    GPoint(x + 56, y + body_h + 2),
+    GPoint(x + 66, y + body_h + 9),
+    GPoint(x + 78, y + body_h + 10),
+    GPoint(x + 94, y + body_h - 8)
   };
-  fill_polygon(ctx, ventral, 4, p.fin, edge);
+  fill_polygon(ctx, ventral, 5, p.fin, edge);
   GPoint body[] = {
-    GPoint(x + 4, middle), GPoint(x + 10, y + 19),
-    GPoint(x + 19, y + 12), GPoint(x + 34, y + 6),
-    GPoint(x + 51, y + 3), GPoint(x + body_w / 2, y + 2),
-    GPoint(x + body_w - 38, y + 5), GPoint(x + body_w - 21, y + 11),
-    GPoint(x + body_w - 7, y + 21), GPoint(x + body_w, middle - 2),
-    GPoint(x + body_w - 7, y + body_h - 20),
-    GPoint(x + body_w - 21, y + body_h - 10),
-    GPoint(x + body_w - 39, y + body_h - 5),
-    GPoint(x + body_w / 2, y + body_h - 2),
-    GPoint(x + 50, y + body_h - 4), GPoint(x + 33, y + body_h - 8),
-    GPoint(x + 18, y + body_h - 14), GPoint(x + 10, y + body_h - 20)
+    GPoint(x + 3, middle), GPoint(x + 5, middle - 12),
+    GPoint(x + 10, y + 17), GPoint(x + 19, y + 10),
+    GPoint(x + 30, y + 5), GPoint(x + 46, y + 2),
+    GPoint(x + body_w / 2, y + 1),
+    GPoint(x + body_w - 44, y + 3),
+    GPoint(x + body_w - 29, y + 8),
+    GPoint(x + body_w - 16, y + 16),
+    GPoint(x + body_w - 6, y + 27),
+    GPoint(x + body_w, middle - 5),
+    GPoint(x + body_w, middle + 3),
+    GPoint(x + body_w - 7, y + body_h - 25),
+    GPoint(x + body_w - 19, y + body_h - 13),
+    GPoint(x + body_w - 34, y + body_h - 6),
+    GPoint(x + body_w / 2, y + body_h - 1),
+    GPoint(x + 45, y + body_h - 2),
+    GPoint(x + 29, y + body_h - 6),
+    GPoint(x + 18, y + body_h - 12),
+    GPoint(x + 10, y + body_h - 20),
+    GPoint(x + 5, middle + 12)
   };
-  fill_polygon(ctx, body, 18, p.fish, edge);
+  fill_polygon(ctx, body, 22, p.fish, edge);
   GPoint highlight[] = {
-    GPoint(x + 21, y + 18), GPoint(x + 35, y + 10),
-    GPoint(x + 53, y + 7), GPoint(x + body_w - 39, y + 10),
-    GPoint(x + body_w - 26, y + 17), GPoint(x + 47, y + 14)
+    GPoint(x + 20, y + 19), GPoint(x + 31, y + 10),
+    GPoint(x + 49, y + 6), GPoint(x + body_w / 2, y + 5),
+    GPoint(x + body_w - 42, y + 8),
+    GPoint(x + body_w - 28, y + 16),
+    GPoint(x + body_w - 47, y + 14), GPoint(x + 52, y + 15)
   };
-  fill_polygon(ctx, highlight, 6, p.fin, p.fin);
+  fill_polygon(ctx, highlight, 8, p.fin, p.fin);
   GPoint pectoral[] = {
-    GPoint(x + body_w - 32, middle + 7),
-    GPoint(x + body_w - 51, middle + 20),
-    GPoint(x + body_w - 48, middle + 4)
+    GPoint(x + body_w - 32, middle + 5),
+    GPoint(x + body_w - 39, middle + 14),
+    GPoint(x + body_w - 53, middle + 22),
+    GPoint(x + body_w - 51, middle + 7),
+    GPoint(x + body_w - 43, middle + 3)
   };
-  fill_polygon(ctx, pectoral, 3, p.fin, edge);
+  fill_polygon(ctx, pectoral, 5, p.fin, edge);
   line(ctx, edge, x + body_w - 30, middle - 11,
        x + body_w - 35, middle - 3, 1);
   line(ctx, edge, x + body_w - 35, middle - 3,
@@ -379,8 +403,10 @@ static void draw_clock_fish(GContext *ctx, int w, int h, Palette p, const struct
     for (int i = 0; time_text[i]; i++) time_text[i] = time_text[i + 1];
   }
   graphics_context_set_text_color(ctx, p.numeral);
-  graphics_draw_text(ctx, time_text, fonts_get_system_font(FONT_KEY_LECO_38_BOLD_NUMBERS),
-                     GRect(x + 2, middle - 28, body_w - 26, 56),
+  graphics_draw_text(ctx, time_text,
+                     fonts_get_system_font(w >= 240 ? FONT_KEY_LECO_36_BOLD_NUMBERS :
+                                                        FONT_KEY_LECO_32_BOLD_NUMBERS),
+                     GRect(x + 10, middle - 23, body_w - 45, 48),
                      GTextOverflowModeTrailingEllipsis, GTextAlignmentCenter, NULL);
   graphics_context_set_fill_color(ctx, p.numeral);
   graphics_fill_circle(ctx, GPoint(x + body_w - 18, middle - 8), 6);
