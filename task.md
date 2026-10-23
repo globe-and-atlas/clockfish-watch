@@ -1,5 +1,19 @@
 # Clockfish watchface
 
+## RePebble 0.7.0 publication — 2026-10-22
+
+- [x] RePebble accepts the 0.7.0 PBW for Emery.
+- [x] RePebble accepts the 0.7.0 PBW for Gabbro.
+- [x] Emery has a native animated GIF in the listing.
+- [x] Gabbro has a native animated GIF in the listing.
+- [x] Emery has four native scene screenshots in the listing.
+- [x] Gabbro has four native scene screenshots in the listing.
+- [x] The listing description names the date choices.
+- [x] The public listing shows version 0.7.0.
+- [x] The public listing opens from the appstore.
+
+The source bundle is `release/Clockfish-0.7.0.pbw`. Native inputs are in `media/native/`; generated store GIFs are in `media/store/`. Leave the pre-existing `.tmp/.gitkeep` deletion untouched.
+
 ## Living aquarium motion — 2026-10-22
 
 - [x] Motion settings offer Still, Gentle, and Lively.

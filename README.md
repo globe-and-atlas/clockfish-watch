@@ -10,7 +10,7 @@ npm install
 pebble build
 ```
 
-The PBW is `watchface/build/watchface.pbw`; the latest local preview is `release/Clockfish-0.7.0.pbw`. Its bundle contains emery and gabbro builds. Use `pebble install --emulator emery` or `pebble install --emulator gabbro` to inspect a native screen. `directives/build_watchface.md` has the complete verification path.
+Version 0.7.0 is [listed on the Pebble Appstore](https://apps.repebble.com/40292564f42e4f4e8763b9a1) for Pebble Time 2 and Pebble Round 2. The matching local PBW is `release/Clockfish-0.7.0.pbw`; the build output is `watchface/build/watchface.pbw`. Use `pebble install --emulator emery` or `pebble install --emulator gabbro` to inspect a native screen. `directives/build_watchface.md` has the complete verification path.
 
 ## Settings
 
@@ -22,4 +22,4 @@ The PBW is `watchface/build/watchface.pbw`; the latest local preview is `release
 - Battery fish: on/off, with percentage and charge color
 - Motion: Still, Gentle, or Lively. Gentle and Lively animate aquarium life in short bursts; Lively does so more often. Both modes allow tap glides and occasional automatic clock-fish glides.
 
-Version 0.7.0 keeps the independent fish/background choices and daily random selection from 0.6.0. It adds short ambient motion, alternating left/right clock-fish sprites, and a rounder live time face. The blue fish has a brighter body against dark kelp water. Existing Motion Off settings become Still; Motion On becomes Gentle. Actual emulator screenshots are in `media/native/`; the original concept renders in `assets/reference/` are design references. Source art lives in `assets/source/`, and `python3 execution/generate_fish_assets.py` plus `python3 execution/generate_background_assets.py` prepare the bundled Pebble images. Store publication and physical-device performance checks remain separate steps.
+Version 0.7.0 keeps the independent fish/background choices and daily random selection from 0.6.0. It adds short ambient motion, alternating left/right clock-fish sprites, and a rounder live time face. The blue fish has a brighter body against dark kelp water. Existing Motion Off settings become Still; Motion On becomes Gentle. Actual emulator screenshots are in `media/native/`; store GIFs are in `media/store/`. The original concept renders in `assets/reference/` are design references. Source art lives in `assets/source/`, and `python3 execution/generate_fish_assets.py` plus `python3 execution/generate_background_assets.py` prepare the bundled Pebble images. Physical-device performance remains unverified.
