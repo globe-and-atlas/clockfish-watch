@@ -1,12 +1,14 @@
 # Current session
 
-**Goal:** Publish the independently reviewed 0.7.0 Clockfish revision on RePebble with native media for both watches.
+**Goal:** Model short wrist glances and revise Clockfish motion to feel calmer on Pebble Time 2 and Round 2.
 **Agent:** OpenAI Codex
 **Handoff-from:** OpenAI Codex
 **Handoff-type:** continuation
-**Status:** Clockfish 0.7.0 is publicly listed at https://apps.repebble.com/40292564f42e4f4e8763b9a1 for Time 2 and Round 2. Physical-watch validation has not been performed.
+**Status:** 0.7.1 is publicly listed with refreshed native GIFs and scene screenshots for both watches. Physical-watch validation has not been performed.
 
 ## Checkpoints
+- 2026-10-22: Completed and published 0.7.1. C motion/selection, JS settings, five art tests, strict health, dual-target build, PBW metadata, and native Emery/Gabbro glide inspection pass. A fresh read-only verifier found no release blocker. RePebble dashboard and public Time 2/Round 2 listing show 0.7.1; both public galleries contain five refreshed previews. The fish moves in its facing direction, turns at the outer excursion, and returns with smaller displacement while live time remains body-centered and battery/date stay still. This is emulator and store evidence, not a physical-wrist comfort or power result.
+- 2026-10-22: Modeled three-second glances with uniformly random phase. Current Gentle/Lively ambient overlap estimates are 25%/39%, with automatic turns about every 3.0/1.2 minutes. Proposed timing reduces overlap to 18%/29% and turns to about 9.8/5.1 minutes; the model does not measure human attention or hardware power. Next: implement smaller movement, turn at glide apex, and native-check both targets.
 - 2026-10-22: Published Clockfish 0.7.0 as a listed watchface after the RePebble form accepted the dual-target PBW, five native screenshots for each target, and native GIFs. The public page shows version 0.7.0, Time 2 and Round 2 support, all four date choices, a PBW download link, and the uploaded PNG/GIF media for both device selections. A fresh read-only verifier confirmed public listing and media visibility. This does not verify watch hardware behavior.
 - 2026-10-22: The developer dashboard contained no Clockfish entry. Started a new watchface listing, uploaded the reviewed 0.7.0 PBW, and entered release notes and a description. The PBW parser detected emery and gabbro. The listing remains unsubmitted while native media is prepared.
 - 2026-10-22: Built 0.7.0 for emery and gabbro, captured all four scene/date presets on each target, and inspected left/right rounded-time captures. C motion/selection, JS settings, asset, strict health, and PBW metadata checks pass. The blue fish body now differs from kelp water. A fresh verifier found no local-preview blocker; saved-setting migration end-to-end, device battery/motion, and store state remain unverified.
@@ -31,7 +33,7 @@
 - 2026-10-22 17:20: Added a bounded vertical arc to the swim. Final emery tap capture shifted the fish left and up; the settled frame returned to center. Rebuilt and recaptured all nine native scene/night screenshots. Clean health check and settings tests passed.
 
 ## Handoff
-- **Completed:** Dual-target 0.7.0 published on RePebble with three motion levels, living aquarium bursts, left/right fish glides, rounded live digits, cobalt fish contrast, five native previews per target, and independent public-listing review.
+- **Completed:** Dual-target 0.7.1 published on RePebble with calmer ambient timing, outward-turn-return fish glides, stable body-centered time, and five refreshed native previews per target. Independent code/native review and public-listing checks passed.
 - **Next:** Check sustained motion, saved-setting migration, and power on physical Pebble Time 2 and Round 2.
 - **Limit:** Emulator and public-listing results do not establish physical-device battery life, motion quality, or saved-setting migration on an existing install.
 
@@ -45,3 +47,4 @@
 - 2026-10-22 20:32 — commit: Add independent Clockfish colors and aquarium life | README.md,execution/capture_native.py,execution/generate_fish_assets.py,knowledge/DECISIONS.md,knowledge/INDEX.md
 - 2026-10-22 21:40 — commit: Animate Clockfish aquarium and refine time lettering | README.md,assets/source/fish-blue-contrast-generated.png,execution/capture_native.py,execution/generate_fish_assets.py,knowledge/DECISIONS.md
 - 2026-10-22 21:48 — commit: Publish Clockfish 0.7.0 with native store media | DEPLOY.md,README.md,execution/create_store_media.py,knowledge/INDEX.md,knowledge/REFLECTIONS.jsonl
+- 2026-10-22 22:15 — commit: Calm Clockfish wrist motion and publish 0.7.1 | DEPLOY.md,README.md,execution/capture_motion.py,execution/create_store_media.py,knowledge/DECISIONS.md

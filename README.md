@@ -10,7 +10,7 @@ npm install
 pebble build
 ```
 
-Version 0.7.0 is [listed on the Pebble Appstore](https://apps.repebble.com/40292564f42e4f4e8763b9a1) for Pebble Time 2 and Pebble Round 2. The matching local PBW is `release/Clockfish-0.7.0.pbw`; the build output is `watchface/build/watchface.pbw`. Use `pebble install --emulator emery` or `pebble install --emulator gabbro` to inspect a native screen. `directives/build_watchface.md` has the complete verification path.
+Clockfish is [listed on the Pebble Appstore](https://apps.repebble.com/40292564f42e4f4e8763b9a1) for Pebble Time 2 and Pebble Round 2. The latest local PBW is `release/Clockfish-0.7.1.pbw`; the build output is `watchface/build/watchface.pbw`. Use `pebble install --emulator emery` or `pebble install --emulator gabbro` to inspect a native screen. `directives/build_watchface.md` has the complete verification path.
 
 ## Settings
 
@@ -22,4 +22,4 @@ Version 0.7.0 is [listed on the Pebble Appstore](https://apps.repebble.com/40292
 - Battery fish: on/off, with percentage and charge color
 - Motion: Still, Gentle, or Lively. Gentle and Lively animate aquarium life in short bursts; Lively does so more often. Both modes allow tap glides and occasional automatic clock-fish glides.
 
-Version 0.7.0 keeps the independent fish/background choices and daily random selection from 0.6.0. It adds short ambient motion, alternating left/right clock-fish sprites, and a rounder live time face. The blue fish has a brighter body against dark kelp water. Existing Motion Off settings become Still; Motion On becomes Gentle. Actual emulator screenshots are in `media/native/`; store GIFs are in `media/store/`. The original concept renders in `assets/reference/` are design references. Source art lives in `assets/source/`, and `python3 execution/generate_fish_assets.py` plus `python3 execution/generate_background_assets.py` prepare the bundled Pebble images. Physical-device performance remains unverified.
+Version 0.7.1 slows ambient bursts and makes each clock-fish glide follow its facing direction, turn near the edge, and return. The time remains centered in the fish body during the turn. Gentle runs a brief ambient burst roughly every 33 seconds and an automatic glide roughly every ten minutes; Lively runs a burst roughly every 17 seconds and a glide roughly every five minutes. These timings are modeled, not physical power measurements. Existing Motion Off settings become Still; Motion On becomes Gentle. Actual emulator screenshots are in `media/native/`; store GIFs are in `media/store/`. The original concept renders in `assets/reference/` are design references. Source art lives in `assets/source/`, and `python3 execution/generate_fish_assets.py` plus `python3 execution/generate_background_assets.py` prepare the bundled Pebble images. Physical-device motion and battery performance remain unverified.

@@ -1,5 +1,30 @@
 # Clockfish watchface
 
+## Calm wrist motion revision — 2026-10-22
+
+- [x] A three-second glance model records the current ambient-motion exposure.
+- [x] A three-second glance model records the proposed ambient-motion exposure.
+- [x] Gentle ambient motion overlaps fewer modeled glances than version 0.7.0.
+- [x] Lively ambient motion overlaps fewer modeled glances than version 0.7.0.
+- [x] Gentle clock-fish turns occur no more than once per nine modeled minutes.
+- [x] Lively clock-fish turns occur no more than once per five modeled minutes.
+- [x] A clock-fish glide starts in the fish's current facing direction.
+- [x] The fish reverses direction at the outer edge of a glide.
+- [x] The time box stays at the same body-centered offset during the turn.
+- [x] The battery percentage remains stationary during the glide.
+- [x] Gentle small-fish movement stays within ten pixels per burst.
+- [x] Lively crossing fish enter from outside the screen.
+- [x] Lively crossing fish exit beyond the opposite screen edge.
+- [x] Still mode schedules no ambient animation.
+- [x] The revised face builds for Emery.
+- [x] The revised face builds for Gabbro.
+- [x] Native motion frames are inspected on Emery.
+- [x] Native motion frames are inspected on Gabbro.
+- [x] A fresh verifier reviews the motion revision.
+- [x] RePebble lists the revised PBW version.
+
+Use `watchface/src/c/motion.h` for timing and movement, `tests/test_motion.c` for bounds, and `directives/build_watchface.md` for native checks. The wrist-glance model is an estimate, not a physical battery test. Preserve the pre-existing `.tmp/.gitkeep` deletion. Version 0.7.1 and refreshed native galleries are public for Time 2 and Round 2; physical-wrist motion remains unverified.
+
 ## RePebble 0.7.0 publication — 2026-10-22
 
 - [x] RePebble accepts the 0.7.0 PBW for Emery.

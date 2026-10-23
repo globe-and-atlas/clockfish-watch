@@ -15,6 +15,7 @@ static GBitmap *s_fish_bitmap;
 static GBitmap *s_background_bitmap;
 static int s_fish_variant = -1;
 static bool s_facing_left;
+static bool s_swim_started_left;
 static bool s_loaded_left;
 static int s_background_variant = -1;
 static bool s_background_night;
@@ -310,10 +311,9 @@ static void draw_scene_life(GContext *ctx, int w, int h, Palette p) {
   int school_y = w >= 240 ? 64 : 47;
   draw_small_fish(ctx, 41 + drift, school_y, 4, accent, outline, false);
   draw_small_fish(ctx, 29 + drift, school_y + 12, 3, p.detail, outline, true);
-  if (s_ambient_frame >= 0) {
+  if (motion_crossing_active(s_motion, s_ambient_frame, s_ambient_cycles)) {
     bool moving_left = s_ambient_cycles % 2 == 0;
-    int crossing_x = 18 + s_ambient_frame * (w - 36) / 5;
-    if (moving_left) crossing_x = w - crossing_x;
+    int crossing_x = motion_crossing_x(w, s_ambient_frame, moving_left);
     draw_small_fish(ctx, crossing_x, h / 2 + 37, 3, accent, outline, moving_left);
   }
 
@@ -351,14 +351,15 @@ static void draw_scene_life(GContext *ctx, int w, int h, Palette p) {
   graphics_fill_circle(ctx, GPoint(crab_x - 2, crab_y - 2), 1);
   graphics_fill_circle(ctx, GPoint(crab_x + 2, crab_y - 2), 1);
 
-  // Bubbles sit at the screen edge and rise slightly during a swim.
+  // Bubbles sit at the screen edge and rise during short ambient bursts.
   graphics_context_set_stroke_color(ctx, s_render_scene == 3 ? GColorBlack : GColorWhite);
   graphics_context_set_stroke_width(ctx, 1);
-  for (int i = 0; i < 5; i++) {
-    int x = w - 15 - (i % 2) * 7;
-    int y = h - 49 - i * 27 - motion_bubble_lift(s_motion, s_ambient_frame) -
+  for (int i = -2; i < 5; i++) {
+    int parity = (i + 2) % 2;
+    int x = w - 15 - parity * 7;
+    int y = h - 49 - i * 27 - motion_bubble_lift(s_motion, s_ambient_frame, s_ambient_cycles) -
             (s_swim_step < 0 ? 0 : s_swim_step);
-    graphics_draw_circle(ctx, GPoint(x, y), 2 + i % 2);
+    graphics_draw_circle(ctx, GPoint(x, y), 2 + parity);
   }
 }
 
@@ -378,16 +379,11 @@ static void draw_light_rays(GContext *ctx, int w, int h, bool night) {
 }
 
 static int fish_shift(int w) {
-  static const int sequence[] = {0, 3, 6, 9, 12, 15, 12, 9, 6, 3, 0};
-  if (s_swim_step < 0) return 0;
-  int value = sequence[s_swim_step] * (s_facing_left ? -1 : 1);
-  // Keep the fuller tail on-screen throughout the swim.
-  return w >= 240 ? value * 2 / 3 : value / 2;
+  return motion_fish_shift(w, s_swim_step, s_swim_started_left);
 }
 
 static int fish_bob(void) {
-  static const int sequence[] = {0, -2, -4, -6, -8, -4, 0, 4, 8, 4, 0};
-  return s_swim_step < 0 ? 0 : sequence[s_swim_step];
+  return motion_fish_bob(s_swim_step);
 }
 
 static void draw_clock_fish_vector(GContext *ctx, int w, int h, Palette p, const struct tm *now) {
@@ -582,8 +578,7 @@ static void draw_clock_fish(GContext *ctx, int w, int h, Palette p, const struct
   graphics_draw_text(ctx, time_text,
                      fonts_get_system_font(w >= 240 ? FONT_KEY_BITHAM_34_MEDIUM_NUMBERS :
                                                         FONT_KEY_BITHAM_30_BLACK),
-                     GRect(x + (w >= 240 ? (s_facing_left ? 45 : 52) :
-                                             (s_facing_left ? 39 : 45)),
+                     GRect(x + (w >= 240 ? 48 : 42),
                            h / 2 - 28 + fish_bob(), w >= 240 ? 118 : 102, 42),
                      GTextOverflowModeTrailingEllipsis, GTextAlignmentCenter, NULL);
 }
@@ -672,14 +667,15 @@ static void face_update(Layer *layer, GContext *ctx) {
 
 static void swim_frame(void *context) {
   s_swim_timer = NULL;
-  if (++s_swim_step >= 11) s_swim_step = -1;
+  if (++s_swim_step == CLOCKFISH_TURN_FRAME) s_facing_left = !s_facing_left;
+  if (s_swim_step >= CLOCKFISH_SWIM_STEPS) s_swim_step = -1;
   layer_mark_dirty(s_face);
   if (s_swim_step >= 0) s_swim_timer = app_timer_register(180, swim_frame, NULL);
 }
 
 static void start_swim(void) {
   if (s_motion == 0 || s_swim_timer) return;
-  s_facing_left = !s_facing_left;
+  s_swim_started_left = s_facing_left;
   s_swim_step = 0;
   layer_mark_dirty(s_face);
   s_swim_timer = app_timer_register(180, swim_frame, NULL);
