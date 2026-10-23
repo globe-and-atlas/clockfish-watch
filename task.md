@@ -1,8 +1,32 @@
 # Clockfish watchface
 
+## Aquarium visual rebuild — 2026-10-22
+
+- [x] The clock body has a tapered fish silhouette.
+- [x] The clock fish has a forked tail.
+- [x] The clock fish has a visible eye.
+- [x] The clock fish has a visible gill.
+- [x] The time remains readable inside the fish on emery.
+- [x] The time remains readable inside the fish on gabbro.
+- [x] The castle scene has visible masonry detail.
+- [x] The kelp scene has layered leaf shapes.
+- [x] The reef scene has distinct coral shapes.
+- [x] The grayscale scene retains legible contrast.
+- [x] The clock fish remains fully inside the emery screen during its swim.
+- [x] The clock fish remains fully inside the gabbro screen during its swim.
+- [x] The date remains legible in each of the four scenes on emery.
+- [x] The date remains legible in each of the four scenes on gabbro.
+- [x] Native emery screenshots are inspected at 200x228.
+- [x] Native gabbro screenshots are inspected at 260x260.
+- [x] A fresh verifier reviews the rebuilt face.
+
+The release boundary for this pass is a local preview. The target is a native dual-platform PBW and updated screenshots in `media/native/`; store publication follows a visual review. The build path is `directives/build_watchface.md` and `execution/capture_native.py`. Generated scratch files stay in `.tmp/`.
+
+The independent review accepted this as a local preview and noted that kelp still reads as sparse reeds at watch size. A richer aquarium art pass and physical watch check remain before a store release decision.
+
 ## Contract
 - Target: Pebble Time 2 (emery) and Pebble Round 2 (gabbro).
-- Output: `release/Clockfish-0.1.0.pbw`.
+- Output: `release/Clockfish-0.2.0.pbw`.
 - Safety: transient outputs stay in `.tmp/`.
 
 ## Validation contract

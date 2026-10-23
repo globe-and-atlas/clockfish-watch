@@ -34,7 +34,7 @@ def capture(platform: str) -> None:
             f"{keys['SETTING_MODE']}={1 if index == 2 else 0}")
         time.sleep(1.0)
         target = output / f"{platform}-{scene}.png"
-        run("screenshot", "--no-open", "--no-correction", str(target))
+        run("screenshot", "--emulator", platform, "--no-open", "--no-correction", str(target))
         signature = target.read_bytes()[:24]
         expected = (200, 228) if platform == "emery" else (260, 260)
         size = (int.from_bytes(signature[16:20], "big"), int.from_bytes(signature[20:24], "big"))

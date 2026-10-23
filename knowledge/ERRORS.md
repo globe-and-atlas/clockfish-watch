@@ -27,3 +27,17 @@
 - **Cause:** The template ignore rule covered only the root `.tmp/` directory.
 - **Fix:** Ignore nested `.tmp/` directories and remove staged screenshots from the index.
 - **Graduated to:** `.gitignore`.
+
+## 2026-10-22: Stale Round 2 emulator passed screenshot size checks
+
+- **Error:** A successful Clockfish install and 260x260 screenshots still showed a previous Way Back error screen or blank frame.
+- **Cause:** The shared Gabbro emulator retained an invalid prior app state; dimensions alone could not identify the active face.
+- **Fix:** Stop QEMU gracefully, preserve the Gabbro SDK state under ignored `.tmp/`, boot a fresh instance, reinstall, and visually inspect the first capture before trusting the batch. The capture script now names the target emulator explicitly.
+- **Graduated to:** `directives/build_watchface.md` and `execution/capture_native.py`.
+
+## 2026-10-22: Swim screenshots caught incomplete redraws
+
+- **Error:** Some rapid screenshots during the 180 ms swim lacked the date or battery fish even though settled frames contained them.
+- **Cause:** Emulator screenshots can arrive during the framebuffer redraw; a single mid-animation frame cannot establish the complete composition.
+- **Fix:** Inspect several frames and a settled frame. Treat incomplete transient captures as capture artifacts until reproduced visually on a physical watch.
+- **Graduated to:** `knowledge/procedural/native_capture.md`.
